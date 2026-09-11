@@ -512,7 +512,7 @@ if (friendsContainer) {
     englishBtn.addEventListener("click", (e) => {
       e.preventDefault();
       alert(
-        "Чтобы посмотреть сайт на английском, используйте встроенный перевод страницы в браузере (например, в Chrome: ПКМ → «Перевести на английский»)."
+        "If you want to view the website in English, use your browser’s built‑in page translation feature (for example, in Chrome: right‑click → “Translate to English”)."
       );
     });
   }
