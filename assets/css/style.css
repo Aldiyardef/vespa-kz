@@ -32,47 +32,28 @@ a {
   text-decoration: none;
 }
 
-/* ШАПКА */
-
 .site-header {
   position: fixed;
   z-index: 20;
   top: 0;
   left: 0;
   right: 0;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  min-height: 112px;
-  padding: 14px 5%;
-
-  background: rgba(17, 17, 17, 0.94);
+  padding: 20px 5%;
+  background: rgba(17, 17, 17, 0.9);
   color: var(--white);
 }
 
-/* ЛОГОТИП */
-
-.logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
 .logo img {
-  display: block;
-  width: 150px;
-  height: auto;
-  max-height: 82px;
+  width: 110px;
+  max-height: 55px;
   object-fit: contain;
 }
 
-/* НАВИГАЦИЯ */
-
 .main-nav {
   display: flex;
-  align-items: center;
   gap: 24px;
   font-size: 12px;
   text-transform: uppercase;
@@ -83,8 +64,6 @@ a {
 .text-link:hover {
   opacity: 0.6;
 }
-
-/* МОБИЛЬНОЕ МЕНЮ */
 
 .menu-toggle {
   display: none;
@@ -101,16 +80,14 @@ a {
   background: white;
 }
 
-/* HERO */
-
 .hero {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 150px 8% 140px;
+  padding: 140px 8%;
   color: white;
-  background: url("../images/main-bg.jpeg") center / cover no-repeat;
+  background: url("assets/images/main-bg.jpeg") center / cover no-repeat;
 }
 
 .hero-overlay {
@@ -197,8 +174,6 @@ a {
   background: white;
 }
 
-/* СЕКЦИИ */
-
 .section {
   padding: 120px 8%;
 }
@@ -209,7 +184,8 @@ a {
 }
 
 .section-grid,
-.section-heading {
+.section-heading,
+.intro-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 70px;
@@ -221,8 +197,8 @@ a {
 }
 
 .section-heading > p {
-  line-height: 1.6;
   max-width: 400px;
+  line-height: 1.6;
 }
 
 .section-label {
@@ -233,16 +209,19 @@ a {
   color: #aaa;
 }
 
-.text-content {
+.text-content,
+.intro-text {
   max-width: 600px;
   line-height: 1.7;
 }
 
-.text-content p {
+.text-content p,
+.intro-text p {
   margin-bottom: 25px;
 }
 
-.wide-image {
+.wide-image,
+.feature-image img {
   width: 100%;
   max-height: 620px;
   object-fit: cover;
@@ -261,26 +240,52 @@ a {
 }
 
 .event-card {
+  display: flex;
+  min-height: 300px;
+  padding: 0;
   overflow: hidden;
-  min-height: 260px;
   background: white;
   border: 1px solid #ddd;
 }
 
 .event-card img {
-  width: 100%;
-  height: 190px;
+  width: 42%;
+  min-height: 260px;
   object-fit: cover;
 }
 
 .event-info {
-  padding: 20px;
+  flex: 1;
+  padding: 28px;
 }
 
-.event-card h3 {
+.event-info h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 400;
+}
+
+.event-card p:last-child {
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+.event-list {
+  display: grid;
+  gap: 0;
+  margin-top: 20px;
+}
+
+.event-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid #d7d3cc;
+}
+
+.event-list-item span {
+  color: var(--gray);
 }
 
 /* ГАЛЕРЕЯ */
@@ -312,21 +317,31 @@ a {
   grid-auto-flow: column;
   grid-auto-columns: minmax(260px, 28vw);
   gap: 15px;
+
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0 0 15px;
+
+  padding: 10px 0 20px;
   scroll-behavior: smooth;
-  overscroll-behavior-inline: contain;
-  scroll-snap-type: x proximity;
-  touch-action: pan-y;
-  cursor: grab;
-  user-select: none;
-  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+
+  scrollbar-width: thin;
+  scrollbar-color: #777 transparent;
 }
 
-.gallery-grid:active {
-  cursor: grabbing;
-  scroll-behavior: auto;
+.gallery-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.gallery-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gallery-grid::-webkit-scrollbar-thumb {
+  background: #777;
+  border-radius: 10px;
 }
 
 .gallery-grid img {
@@ -335,32 +350,25 @@ a {
   object-fit: cover;
   cursor: pointer;
   background: #333;
-  scroll-snap-align: start;
-  -webkit-user-drag: none;
 }
 
 /* ДРУЗЬЯ */
 
 .friends-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
+  margin-top: 40px;
 }
 
-.friend-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 150px;
+.friends-grid img {
+  display: block;
+  width: 100%;
+  height: 150px;
   padding: 25px;
+  object-fit: contain;
   background: white;
   border: 1px solid #ddd;
-}
-
-.friend-card img {
-  max-width: 100%;
-  max-height: 90px;
-  object-fit: contain;
 }
 
 /* ДНИ РОЖДЕНИЯ */
@@ -398,12 +406,12 @@ a {
   color: var(--gray);
 }
 
-/* REPORT */
+/* ОТЧЁТ И КОНТАКТЫ */
 
 .report {
   background:
     linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)),
-    url("../images/main-bg.jpeg") center / cover no-repeat;
+    url("assets/images/main-bg.jpeg") center / cover no-repeat;
   color: white;
 }
 
@@ -419,8 +427,6 @@ a {
 .dark-link {
   color: var(--black);
 }
-
-/* FOOTER */
 
 .site-footer {
   display: flex;
@@ -465,17 +471,125 @@ a {
   cursor: pointer;
 }
 
+/* УСТАВ */
+
+.club-charter {
+  padding-top: 0;
+  padding-bottom: 120px;
+}
+
+.charter-details {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid #ddd;
+}
+
+.charter-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 30px;
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 400;
+}
+
+.charter-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.charter-details summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--gray);
+  font-size: 30px;
+}
+
+.charter-details[open] summary {
+  border-bottom: 1px solid #ddd;
+}
+
+.charter-details[open] summary::after {
+  content: "−";
+}
+
+.charter-details summary:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: -3px;
+}
+
+.charter-content {
+  max-width: 760px;
+  padding: 28px 30px 34px;
+  color: #444;
+  line-height: 1.7;
+}
+
+.charter-content h3 {
+  margin: 0 0 30px;
+  color: var(--black);
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 400;
+}
+
+.charter-section + .charter-section {
+  margin-top: 30px;
+}
+
+.charter-section h4 {
+  margin: 0 0 12px;
+  color: var(--black);
+  font-size: 17px;
+}
+
+.charter-content p {
+  margin: 0 0 12px;
+}
+
+.charter-content ol,
+.charter-content ul {
+  margin: 0 0 12px;
+  padding-left: 24px;
+}
+
+.charter-content li + li {
+  margin-top: 7px;
+}
+
+.header-instagram {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: 0.25s;
+}
+
+.header-instagram:hover {
+  background: white;
+  color: var(--black);
+}
 /* МОБИЛЬНАЯ ВЕРСИЯ */
 
 @media (max-width: 800px) {
-  .site-header {
-    min-height: 88px;
-    padding: 10px 5%;
+  .header-instagram {
+  margin-left: auto;
+  margin-right: 15px;
+  padding: 8px 11px;
+  font-size: 10px;
+}
+@media (max-width: 800px) {
+  .language-switcher {
+    margin-right: 10px;
   }
-
-  .logo img {
-    width: 125px;
-    max-height: 68px;
+}
+  .site-header {
+    padding: 15px 5%;
   }
 
   .menu-toggle {
@@ -487,11 +601,9 @@ a {
     top: 100%;
     left: 0;
     right: 0;
-
     display: none;
     flex-direction: column;
     gap: 0;
-
     background: var(--black);
   }
 
@@ -505,7 +617,8 @@ a {
   }
 
   .section-grid,
-  .section-heading {
+  .section-heading,
+  .intro-grid {
     grid-template-columns: 1fr;
     gap: 25px;
   }
@@ -525,7 +638,22 @@ a {
   .events-grid,
   .friends-grid,
   .birthdays-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .event-card {
+    display: block;
+  }
+
+  .event-card img {
+    width: 100%;
+    height: 220px;
+    min-height: 0;
+  }
+
+  .event-list-item {
+    flex-direction: column;
+    gap: 6px;
   }
 
   .birthday-card img {
@@ -537,7 +665,31 @@ a {
     gap: 10px;
   }
 }
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  margin-right: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
 
+.lang-button {
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.lang-button.active,
+.lang-button:hover {
+  color: white;
+}
 @media (max-width: 500px) {
   .events-grid,
   .friends-grid,
