@@ -47,8 +47,8 @@ a {
 }
 
 .logo img {
-  width: 130px;
-  max-height: 75px;
+  width: 150px;
+  max-height: 100px;
   object-fit: contain;
 }
 
