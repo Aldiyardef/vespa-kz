@@ -18,6 +18,8 @@
   <link rel="manifest" href="favicon_io/site.webmanifest">
 
   <link rel="stylesheet" href="assets/css/style.css">
+  <!-- Google Translate Widget -->
+<meta name="google-translate-customization" content="f5e3c8a1f0e8f8e8-0000000000000000-0000000000000000"></meta>
 </head>
 
 <body>
@@ -409,17 +411,20 @@
   <script src="script.js"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"8607d2a720d14b038279025b2b5a82e5","spa":2}' crossorigin="anonymous"></script>
 
-<!-- Google Translate Widget -->
-<div id="google_translate_element" style="display:none;"></div>
+<!-- Google Translate Selector -->
+<div id="google_translate_element"></div>
 
 <script type="text/javascript">
 function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'ru',
-    includedLanguages: 'en',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-    autoDisplay: false
-  }, 'google_translate_element');
+  new google.translate.TranslateElement(
+    {
+      pageLanguage: 'ru',
+      includedLanguages: 'en',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    },
+    'google_translate_element'
+  );
 }
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -427,12 +432,9 @@ function googleTranslateElementInit() {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Ждём загрузки Google Translate
-  const checkGoogleTranslate = setInterval(function() {
+  const checkTranslate = setInterval(function() {
     if (typeof google !== 'undefined' && google.translate && google.translate.TranslateElement) {
-      clearInterval(checkGoogleTranslate);
-
-      // Инициализируем переводчик
-      googleTranslateElementInit();
+      clearInterval(checkTranslate);
 
       // Ждём появления селекта
       const checkSelect = setInterval(function() {
@@ -445,12 +447,36 @@ document.addEventListener('DOMContentLoaded', function() {
           if (nav) {
             const translateWrapper = document.createElement('div');
             translateWrapper.className = 'translate-wrapper';
+            translateWrapper.style.cssText = `
+              position: relative;
+              display: inline-block;
+              margin-left: 20px;
+              z-index: 9999;
+            `;
+
             translateWrapper.innerHTML = `
-              <button class="translate-btn">
-                <span class="flag">🇷🇺</span>
-                <span class="lang-text">RUS</span>
+              <button class="translate-btn" style="
+                padding: 10px 15px;
+                background: #f8f8f8;
+                border: 1px solid #e0e0e0;
+                border-radius: 25px;
+                color: #333;
+                font-family: 'Arial', sans-serif;
+                font-size: 14px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                height: 38px;
+                min-width: 60px;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+              ">
+                <span class="flag" style="font-size: 16px;">🇷🇺</span>
+                <span class="lang-text" style="font-weight: bold;">RUS</span>
               </button>
             `;
+
             nav.appendChild(translateWrapper);
 
             // Обработчик кнопки
@@ -473,5 +499,21 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 100);
 });
 </script>
+
+<style>
+/* Стили для Google Translate селекта (скрываем стандартный виджет) */
+.goog-te-gadget {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Стили для селекта */
+.goog-te-combo {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+</style>
 </body>
 </html>
