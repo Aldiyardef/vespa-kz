@@ -375,12 +375,41 @@ document.addEventListener("DOMContentLoaded", () => {
       image.onerror = () => {
         image.remove();
       };
+const gallerySection = galleryContainer?.closest("section");
 
-      image.addEventListener("click", () => {
-        openLightbox(image.src, image.alt);
-      });
+if (galleryContainer && gallerySection) {
+  const previousButton = gallerySection.querySelector(
+    ".gallery-button.prev, .gallery-prev"
+  );
 
-      galleryContainer.appendChild(image);
+  const nextButton = gallerySection.querySelector(
+    ".gallery-button.next, .gallery-next"
+  );
+
+  const scrollGallery = direction => {
+    galleryContainer.scrollBy({
+      left: direction * galleryContainer.clientWidth * 0.8,
+      behavior: "smooth"
+    });
+  };
+
+  if (previousButton) {
+    previousButton.addEventListener("click", () => {
+      scrollGallery(-1);
+    });
+  }
+
+  if (nextButton) {
+    nextButton.addEventListener("click", () => {
+      scrollGallery(1);
+    });
+  }
+}
+image.addEventListener("click", () => {
+  openLightbox(image.src, image.alt);
+});
+
+galleryContainer.appendChild(image);
     }
   }
 
