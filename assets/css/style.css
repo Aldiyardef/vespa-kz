@@ -688,22 +688,111 @@ a {
   }
 }
 <style>
-/* Стили для виджета перевода */
-#google_translate_element {
+/* ВСЕ стили ниже вставьте в ваш основной файл стилей (style.css) или в тег <style> в head */
+.translate-menu-item {
+  position: relative;
   display: inline-block;
+  margin-left: 15px;
+}
+
+.translate-btn {
+  padding: 8px 12px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 25px;
+  color: #333;
   font-family: 'Arial', sans-serif;
   font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
 }
 
-#google_translate_element select {
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  background-color: #f8f8f8;
+.translate-btn:hover {
+  background: #f0f0f0;
+  border-color: #d0d0d0;
+}
+
+.translate-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: white;
+  min-width: 120px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 8px 0;
+  z-index: 1000;
+  border: 1px solid #e0e0e0;
+  margin-top: 5px;
+}
+
+.translate-dropdown a {
+  display: block;
+  padding: 8px 16px;
   color: #333;
+  text-decoration: none;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  transition: background 0.2s;
 }
 
-#google_translate_element option {
-  background-color: white;
+.translate-dropdown a:hover {
+  background: #f5f5f5;
+  color: #4a90e2;
+}
+
+.translate-menu-item:hover .translate-dropdown {
+  display: block;
+}
+
+/* Флаги для языков */
+.translate-btn span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.translate-btn[data-lang="en"] span:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 15px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="30" fill="%23012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="%23fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="%23C8102E" stroke-width="4"/><path d="M30,0 L30,30 M0,15 L60,15" stroke="%23fff" stroke-width="10"/><path d="M30,0 L30,30 M0,15 L60,15" stroke="%23C8102E" stroke-width="6"/></svg>');
+  background-size: contain;
+}
+
+.translate-btn[data-lang="ru"] span:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 15px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="30" fill="%23fff"/><rect width="60" height="10" fill="%230039a6"/><rect width="60" height="10" y="20" fill="%23d52b1e"/></svg>');
+  background-size: contain;
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const translateBtn = document.querySelector('.translate-btn');
+  const dropdownLinks = document.querySelectorAll('.translate-dropdown a');
+
+  dropdownLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const lang = this.getAttribute('data-lang');
+      translateBtn.setAttribute('data-lang', lang);
+      translateBtn.querySelector('span:first-child').textContent = lang.toUpperCase();
+      console.log('Язык переключен на:', lang);
+    });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.translate-menu-item')) {
+      document.querySelector('.translate-dropdown').style.display = 'none';
+    }
+  });
+});
+</script>
