@@ -688,11 +688,12 @@ a {
   }
 }
 <style>
-/* ВСЕ стили ниже вставьте в ваш основной файл стилей (style.css) или в тег <style> в head */
+/* Стили для меню перевода - добавьте в ваш style.css */
 .translate-menu-item {
   position: relative;
   display: inline-block;
-  margin-left: 15px;
+  margin-left: 20px;
+  z-index: 9999 !important;
 }
 
 .translate-btn {
@@ -708,6 +709,8 @@ a {
   align-items: center;
   gap: 6px;
   transition: all 0.3s ease;
+  height: 36px; /* Фиксированная высота для удобного клика */
+  min-width: 60px;
 }
 
 .translate-btn:hover {
@@ -724,7 +727,7 @@ a {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   border-radius: 8px;
   padding: 8px 0;
-  z-index: 1000;
+  z-index: 10000 !important; /* Очень высокий приоритет */
   border: 1px solid #e0e0e0;
   margin-top: 5px;
 }
@@ -756,26 +759,19 @@ a {
 }
 
 .translate-btn[data-lang="en"] span:first-child::before {
-  content: "";
-  display: inline-block;
-  width: 20px;
-  height: 15px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="30" fill="%23012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="%23fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="%23C8102E" stroke-width="4"/><path d="M30,0 L30,30 M0,15 L60,15" stroke="%23fff" stroke-width="10"/><path d="M30,0 L30,30 M0,15 L60,15" stroke="%23C8102E" stroke-width="6"/></svg>');
-  background-size: contain;
+  content: "🇬🇧";
+  font-size: 16px;
 }
 
 .translate-btn[data-lang="ru"] span:first-child::before {
-  content: "";
-  display: inline-block;
-  width: 20px;
-  height: 15px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="30" fill="%23fff"/><rect width="60" height="10" fill="%230039a6"/><rect width="60" height="10" y="20" fill="%23d52b1e"/></svg>');
-  background-size: contain;
+  content: "🇷🇺";
+  font-size: 16px;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Улучшенный обработчик для переключения языка
   const translateBtn = document.querySelector('.translate-btn');
   const dropdownLinks = document.querySelectorAll('.translate-dropdown a');
 
@@ -783,16 +779,35 @@ document.addEventListener('DOMContentLoaded', function() {
     link.addEventListener('click', function(e) {
       e.preventDefault();
       const lang = this.getAttribute('data-lang');
+
+      // Меняем отображаемый язык
       translateBtn.setAttribute('data-lang', lang);
-      translateBtn.querySelector('span:first-child').textContent = lang.toUpperCase();
-      console.log('Язык переключен на:', lang);
+      translateBtn.querySelector('span:first-child').innerHTML =
+        lang === 'en' ? '🇬🇧 EN' : '🇷🇺 RU';
+
+      // Переключаем язык страницы (если есть поддержка)
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', lang);
+      window.location.href = url.toString();
+
+      // Скрываем выпадающее меню
+      document.querySelector('.translate-dropdown').style.display = 'none';
     });
   });
 
+  // Закрытие меню при клике вне его
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.translate-menu-item')) {
+    const menuItem = e.target.closest('.translate-menu-item');
+    if (!menuItem) {
       document.querySelector('.translate-dropdown').style.display = 'none';
     }
+  });
+
+  // Открытие меню при клике на кнопку
+  document.querySelector('.translate-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const dropdown = document.querySelector('.translate-dropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
   });
 });
 </script>
