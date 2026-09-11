@@ -60,18 +60,59 @@
   <a href="#charter">УСТАВ</a>
   <a href="#contacts">КОНТАКТЫ</a>
 
-  <!-- Кнопка перевода с увеличенной зоной клика -->
-  <div class="translate-wrapper">
-    <button class="translate-btn">
-      <span class="flag">🇷🇺</span>
-      <span class="lang-text">RUS</span>
-      <span class="arrow">▼</span>
-    </button>
-    <div class="translate-dropdown">
-      <a href="#" class="lang-link" data-lang="ru">Русский 🇷🇺</a>
-      <a href="#" class="lang-link" data-lang="en">English 🇬🇧</a>
-    </div>
+  <!-- Вставьте это ПОСЛЕ последней ссылки в вашем <nav> -->
+<div class="translate-wrapper" style="position: relative; display: inline-block; margin-left: 20px;">
+  <button class="translate-btn" style="
+    padding: 10px 15px;
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    min-width: 60px;
+    z-index: 9999;
+  ">
+    <span>🇷🇺</span>
+    <span>RUS</span>
+    <span style="font-size: 10px;">▼</span>
+  </button>
+  <div class="translate-dropdown" style="
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    min-width: 120px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 8px 0;
+    z-index: 10000;
+    border: 1px solid #e0e0e0;
+    margin-top: 5px;
+  ">
+    <a href="#" class="lang-link" data-lang="ru" style="
+      display: block;
+      padding: 8px 16px;
+      color: #333;
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+    ">Русский 🇷🇺</a>
+    <a href="#" class="lang-link" data-lang="en" style="
+      display: block;
+      padding: 8px 16px;
+      color: #333;
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+    ">English 🇬🇧</a>
   </div>
+</div>
 </nav>
 
 <style>
@@ -530,5 +571,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
   <script src="script.js"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"8607d2a720d14b038279025b2b5a82e5","spa":2}' crossorigin="anonymous"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const langLinks = document.querySelectorAll('.lang-link');
+  const translateBtn = document.querySelector('.translate-btn');
+  const dropdown = document.querySelector('.translate-dropdown');
+
+  // Открытие меню
+  translateBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // Переключение языка
+  langLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const lang = this.getAttribute('data-lang');
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', lang);
+      window.location.href = url.toString();
+    });
+  });
+
+  // Закрытие при клике вне
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.translate-wrapper')) {
+      dropdown.style.display = 'none';
+    }
+  });
+});
+</script>
 </body>
 </html>
