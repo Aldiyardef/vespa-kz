@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       date: "18 марта",
       month: 3,
       day: 18,
-      image: "Канат Аубакиров.jpeg"
+      image: "Канат Аубакиров.jpg"
     },
     {
       name: "Азамат Жарылкасын",
@@ -63,11 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
       image: "Atıl Avcı.jpeg"
     },
     {
-      name: "Ельдар Жанабаев",
+      name: "Елдар Жанабаев",
       date: "7 июня",
       month: 6,
       day: 7,
-      image: "Ельдар Жанабаев.jpeg"
+      image: "Елдар Жанабаев.jpeg"
     },
     {
       name: "Асыл Ибрагимов",
@@ -300,42 +300,44 @@ document.addEventListener("DOMContentLoaded", () => {
   =====================================================
   */
 
-  const friends = [
-    "ducati.png",
-    "E_Lavrmoto_Logo_1080.png",
-    "f77bafb0da099212271dfb55685dd2980dfd07a6.png",
-    "gc.jpg",
-    "giginova.png",
-    "hd.jpg",
-    "husqvarna.png",
-    "KCF.jpg",
-    "ktm.jpg",
-    "motovoz.jpg",
-    "qarshyga.png",
-    "sip.jpg"
-  ];
+const friends = [
+  "ducati.png",
+  "E_Lavrmoto_Logo_1080.png",
+  "f77bafb0da099212271dfb55685dd2980dfd07a6.png",
+  "gc.jpg",
+  "giginova.png",
+  "hd.jpg",
+  "husqvarna.png",
+  "KCF.jpg",
+  "ktm.jpg",
+  "motovoz.jpg",
+  "qarshyga.png",
+  "sip.jpg"
+];
 
-  const friendsContainer =
-    document.querySelector("#friends-grid") ||
-    document.querySelector(".friends-grid");
+const friendsContainer = document.querySelector("#friends-grid");
 
-  if (friendsContainer) {
-    friendsContainer.innerHTML = "";
+if (friendsContainer) {
+  friendsContainer.innerHTML = "";
 
-    friends.forEach(fileName => {
-      const image = document.createElement("img");
+  friends.forEach((fileName) => {
+    const card = document.createElement("div");
+    card.className = "friend-card";
 
-      image.src = `assets/friends/${encodeURIComponent(fileName)}`;
-      image.alt = "Друг клуба";
-      image.loading = "lazy";
+    const image = document.createElement("img");
+    image.src = `./assets/friends/${encodeURIComponent(fileName)}`;
+    image.alt = "Друг клуба";
+    image.loading = "lazy";
 
-      image.onerror = () => {
-        image.remove();
-      };
+    image.onerror = () => {
+      console.error(`Не найден файл: ${fileName}`);
+      card.remove();
+    };
 
-      friendsContainer.appendChild(image);
-    });
-  }
+    card.appendChild(image);
+    friendsContainer.appendChild(card);
+  });
+}
 
 
   /*
