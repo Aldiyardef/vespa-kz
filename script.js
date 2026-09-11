@@ -1,95 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const translations = {
-    en: {
-      "Мы в Instagram": "Follow us on Instagram",
-      "О клубе": "About the club",
-      "История": "History",
-      "События": "Events",
-      "Галерея": "Gallery",
-      "Дни рождения": "Birthdays",
-      "Устав": "Charter",
-      "Контакты": "Contacts",
-
-      "Свобода": "Freedom",
-      "в движении": "in motion",
-
-      "Официальное сообщество любителей итальянских скутеров Vespa в Казахстане.":
-        "The official community of Italian Vespa scooter enthusiasts in Kazakhstan.",
-
-      "Листайте вниз": "Scroll down",
-      "Присоединиться": "Join us",
-      "Стать частью клуба": "Become part of the club",
-
-      "Итальянский": "Italian",
-      "характер.": "character.",
-      "Казахстанские": "Kazakh",
-      "дороги.": "roads.",
-
-      "С апреля 2021 года": "Since April 2021",
-      "История клуба": "Club history",
-
-      "Календарь клуба": "Club calendar",
-      "Встречи, поездки, конкурсы и мероприятия для участников клуба и друзей Vespa.":
-        "Meetings, rides, contests and events for club members and Vespa friends.",
-
-      "Наши поездки": "Our rides",
-      "Фотографии с поездок, встреч и международных мероприятий.":
-        "Photos from rides, meetings and international events.",
-
-      "Сообщество": "Community",
-      "Наши друзья": "Our friends",
-      "Дни рождения": "Birthdays",
-      "Календарь участников": "Members' calendar",
-
-      "Устав клуба": "Club charter",
-      "Поехали вместе": "Let's ride together",
-      "Связаться с нами": "Contact us",
-      "Готовы": "Ready",
-      "к поездке?": "for a ride?",
-      "Instagram": "Instagram",
-      "Almaty, Kazakhstan": "Almaty, Kazakhstan"
-    }
-  };
-
-  const originalTexts = new Map();
-
-  function translatePage(language) {
-    document.documentElement.lang = language;
-
-    document.querySelectorAll("body *").forEach(element => {
-      if (element.children.length === 0) {
-        const original = originalTexts.get(element) || element.textContent.trim();
-
-        if (!originalTexts.has(element)) {
-          originalTexts.set(element, original);
-        }
-
-        if (language === "en" && translations.en[original]) {
-          element.textContent = translations.en[original];
-        } else if (language === "ru") {
-          element.textContent = originalTexts.get(element);
-        }
-      }
-    });
-
-    document.querySelectorAll(".lang-button").forEach(button => {
-      button.classList.toggle(
-        "active",
-        button.dataset.language === language
-      );
-    });
-
-    localStorage.setItem("vespa-language", language);
-  }
-
-  document.querySelectorAll(".lang-button").forEach(button => {
-    button.addEventListener("click", () => {
-      translatePage(button.dataset.language);
-    });
-  });
-
-  const savedLanguage = localStorage.getItem("vespa-language") || "ru";
-  translatePage(savedLanguage);
   /*
   =====================================================
   ДНИ РОЖДЕНИЯ
@@ -116,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       date: "18 марта",
       month: 3,
       day: 18,
-      image: "Канат Аубакиров.jpg"
+      image: "Канат Аубакиров.jpeg"
     },
     {
       name: "Азамат Жарылкасын",
@@ -154,11 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
       image: "Atıl Avcı.jpeg"
     },
     {
-      name: "Елдар Жанабаев",
+      name: "Ельдар Жанабаев",
       date: "7 июня",
       month: 6,
       day: 7,
-      image: "Елдар Жанабаев.jpeg"
+      image: "Ельдар Жанабаев.jpeg"
     },
     {
       name: "Асыл Ибрагимов",
@@ -274,39 +183,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const events = [
     {
-      title: "Vespa Среды",
-      image: "wednesday.jpeg"
-    },
-    {
-      title: "Поездка на Arbawine",
+      title: "Arbawine",
       image: "arbawine.jpg"
     },
     {
-      title: "Фотоконкурс 2026",
+      title: "Club Day",
+      image: "club day.jpeg"
+    },
+    {
+      title: "Contest 2026",
       image: "contest2026.png"
     },
     {
-      title: "Distinguished Gentleman's Ride",
+      title: "DGR",
       image: "dgr.jpg"
     },
     {
-      title: "Поездка на Иссыл-Куль",
-      image: "issykkul.jpg"
+      title: "Issyk Kul",
+      image: "issyk-kul.jpg"
     },
     {
-      title: "Поездка на Катон-Карагай",
+      title: "Katon",
       image: "katon.jpg"
     },
     {
-      title: "Открытие и закрытие мотосезона",
+      title: "Season",
       image: "season.jpg"
     },
     {
-      title: "SIP Open Days",
-      image: "sipopependy.jpg"
+      title: "Sipopopendy",
+      image: "sipопопendy.jpg.avif"
     },
     {
-      title: "Поездка на Сокол",
+      title: "Sokol",
       image: "sokol.jpg"
     },
     {
@@ -391,44 +300,42 @@ document.addEventListener("DOMContentLoaded", () => {
   =====================================================
   */
 
-const friends = [
-  "ducati.png",
-  "E_Lavrmoto_Logo_1080.png",
-  "f77bafb0da099212271dfb55685dd2980dfd07a6.png",
-  "gc.jpg",
-  "giginova.png",
-  "hd.jpg",
-  "husqvarna.png",
-  "KCF.jpg",
-  "ktm.jpg",
-  "motovoz.jpg",
-  "qarshyga.png",
-  "sip.jpg"
-];
+  const friends = [
+    "ducati.png",
+    "E_Lavrmoto_Logo_1080.png",
+    "f77bafb0da099212271dfb55685dd2980dfd07a6.png",
+    "gc.jpg",
+    "giginova.png",
+    "hd.jpg",
+    "husqvarna.png",
+    "KCF.jpg",
+    "ktm.jpg",
+    "motovoz.jpg",
+    "qarshyga.png",
+    "sip.jpg"
+  ];
 
-const friendsContainer = document.querySelector("#friends-grid");
+  const friendsContainer =
+    document.querySelector("#friends-grid") ||
+    document.querySelector(".friends-grid");
 
-if (friendsContainer) {
-  friendsContainer.innerHTML = "";
+  if (friendsContainer) {
+    friendsContainer.innerHTML = "";
 
-  friends.forEach((fileName) => {
-    const card = document.createElement("div");
-    card.className = "friend-card";
+    friends.forEach(fileName => {
+      const image = document.createElement("img");
 
-    const image = document.createElement("img");
-    image.src = `./assets/friends/${encodeURIComponent(fileName)}`;
-    image.alt = "Друг клуба";
-    image.loading = "lazy";
+      image.src = `assets/friends/${encodeURIComponent(fileName)}`;
+      image.alt = "Друг клуба";
+      image.loading = "lazy";
 
-    image.onerror = () => {
-      console.error(`Не найден файл: ${fileName}`);
-      card.remove();
-    };
+      image.onerror = () => {
+        image.remove();
+      };
 
-    card.appendChild(image);
-    friendsContainer.appendChild(card);
-  });
-}
+      friendsContainer.appendChild(image);
+    });
+  }
 
 
   /*
@@ -481,10 +388,9 @@ if (friendsContainer) {
 
   if (menuButton && navigation) {
     menuButton.addEventListener("click", () => {
-      const isOpen = navigation.classList.toggle("is-open");
-      menuButton.classList.toggle("is-active", isOpen);
-      menuButton.setAttribute("aria-expanded", String(isOpen));
-      menuButton.setAttribute("aria-label", isOpen ? "Закрыть меню" : "Открыть меню");
+      navigation.classList.toggle("is-open");
+      menuButton.classList.toggle("is-active");
+      menuButton.setAttribute("aria-expanded", navigation.classList.contains("is-open"));
     });
 
     navigation.querySelectorAll("a").forEach(link => {
@@ -492,8 +398,65 @@ if (friendsContainer) {
         navigation.classList.remove("is-open");
         menuButton.classList.remove("is-active");
         menuButton.setAttribute("aria-expanded", "false");
-        menuButton.setAttribute("aria-label", "Открыть меню");
       });
     });
   }
+
+  /*
+  =====================================================
+  RU / EN
+  =====================================================
+  */
+  const translations = {
+    ru: {
+      navAbout: "О клубе", navHistory: "История", navEvents: "События", navGallery: "Галерея", navContacts: "Контакты",
+      menuOpen: "Открыть меню", heroTitle: "Свобода<br>в движении", heroDescription: "Официальное сообщество любителей итальянских скутеров Vespa<br>в Казахстане.",
+      aboutClub: "О клубе", join: "Присоединиться", aboutLabel: "О клубе", aboutTitle: "Итальянский<br>характер.<br>Казахстанские<br>дороги.", becomeMember: "Стать частью клуба",
+      historyLabel: "С апреля 2021 года", historyTitle: "История<br>клуба", historyLead: "От небольшой встречи двух энтузиастов<br>до большого сообщества Vespa в Казахстане.",
+      eventsLabel: "Календарь клуба", eventsTitle: "События", eventsLead: "Встречи, поездки, конкурсы и мероприятия<br>для участников клуба и друзей Vespa.", weekly: "Каждую среду, 19:00", vespaWednesday: "Vespa<br>Среда", details: "Узнать детали",
+      galleryLabel: "Наши поездки", galleryTitle: "Галерея", galleryLead: "Фотографии с поездок, встреч и международных мероприятий.",
+      friendsLabel: "Сообщество", friendsTitle: "Наши<br>друзья", friendsLead: "Клуб развивается благодаря участникам,<br>партнёрам и друзьям мотосообщества.",
+      reportTitle: "История<br>только начинается.", reportText: "Присоединяйтесь к нам и становитесь частью сообщества,<br>которое выбирает двигаться красиво.", rideTogether: "Поехали вместе",
+      contactLabel: "Связаться с нами", contactTitle: "Готовы<br>к поездке?", contactText: "Напишите нам, чтобы узнать о ближайшей встрече<br>или присоединиться к Vespa Kazakhstan Club.", almaty: "Almaty, Kazakhstan"
+    },
+    en: {
+      navAbout: "About", navHistory: "History", navEvents: "Events", navGallery: "Gallery", navContacts: "Contacts",
+      menuOpen: "Open menu", heroTitle: "Freedom<br>in motion", heroDescription: "The official community of Italian Vespa scooter enthusiasts<br>in Kazakhstan.",
+      aboutClub: "About the club", join: "Join us", aboutLabel: "About the club", aboutTitle: "Italian<br>character.<br>Kazakh<br>roads.", becomeMember: "Become a member",
+      historyLabel: "Since April 2021", historyTitle: "Club<br>history", historyLead: "From a small meeting of two enthusiasts<br>to a large Vespa community in Kazakhstan.",
+      eventsLabel: "Club calendar", eventsTitle: "Events", eventsLead: "Meetups, rides, contests and events<br>for club members and Vespa friends.", weekly: "Every Wednesday, 19:00", vespaWednesday: "Vespa<br>Wednesday", details: "Discover more",
+      galleryLabel: "Our rides", galleryTitle: "Gallery", galleryLead: "Photos from rides, meetups and international events.",
+      friendsLabel: "Community", friendsTitle: "Our<br>friends", friendsLead: "The club grows thanks to members,<br>partners and friends of the motor community.",
+      reportTitle: "The story<br>has just begun.", reportText: "Join us and become part of a community<br>that chooses to move beautifully.", rideTogether: "Ride with us",
+      contactLabel: "Get in touch", contactTitle: "Ready<br>to ride?", contactText: "Write to us to learn about the next meetup<br>or join Vespa Kazakhstan Club.", almaty: "Almaty, Kazakhstan"
+    }
+  };
+
+  const languageButtons = document.querySelectorAll("[data-language]");
+  const setLanguage = language => {
+    const dictionary = translations[language] || translations.ru;
+    document.documentElement.lang = language;
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+      const value = dictionary[element.dataset.i18n];
+      if (value) element.innerHTML = value;
+    });
+    document.querySelectorAll("[data-i18n-aria-label]").forEach(element => {
+      const value = dictionary[element.dataset.i18nAriaLabel];
+      if (value) element.setAttribute("aria-label", value);
+    });
+    languageButtons.forEach(button => {
+      const active = button.dataset.language === language;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    try { localStorage.setItem("vespa-language", language); } catch (error) { /* storage may be unavailable */ }
+  };
+
+  languageButtons.forEach(button => {
+    button.addEventListener("click", () => setLanguage(button.dataset.language));
+  });
+
+  let savedLanguage = "ru";
+  try { savedLanguage = localStorage.getItem("vespa-language") || "ru"; } catch (error) { /* storage may be unavailable */ }
+  setLanguage(savedLanguage);
 });
