@@ -516,4 +516,4 @@ if (friendsContainer) {
       );
     });
   }
-}); // ← это закрытие самого первого document.addEventListener("DOMContentLoaded", () => { ... })
+});
