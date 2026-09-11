@@ -18,7 +18,7 @@
   <link rel="manifest" href="favicon_io/site.webmanifest">
 
   <link rel="stylesheet" href="assets/css/style.css">
-  <!-- Google Translate Widget -->
+  <!-- Google Translate Customization -->
 <meta name="google-translate-customization" content="f5e3c8a1f0e8f8e8-0000000000000000-0000000000000000"></meta>
 </head>
 
@@ -410,21 +410,17 @@
 
   <script src="script.js"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"8607d2a720d14b038279025b2b5a82e5","spa":2}' crossorigin="anonymous"></script>
-
 <!-- Google Translate Selector -->
-<div id="google_translate_element"></div>
+<div id="google_translate_element" style="display: none;"></div>
 
 <script type="text/javascript">
 function googleTranslateElementInit() {
-  new google.translate.TranslateElement(
-    {
-      pageLanguage: 'ru',
-      includedLanguages: 'en',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-      autoDisplay: false
-    },
-    'google_translate_element'
-  );
+  new google.translate.TranslateElement({
+    pageLanguage: 'ru',
+    includedLanguages: 'en',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false
+  }, 'google_translate_element');
 }
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -436,65 +432,40 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof google !== 'undefined' && google.translate && google.translate.TranslateElement) {
       clearInterval(checkTranslate);
 
-      // Ждём появления селекта
-      const checkSelect = setInterval(function() {
-        const select = document.querySelector('.goog-te-combo');
-        if (select) {
-          clearInterval(checkSelect);
+      // Добавляем кнопку ENGLISH в меню
+      const nav = document.querySelector('.main-nav');
+      if (nav) {
+        const englishBtn = document.createElement('a');
+        englishBtn.href = '#';
+        englishBtn.className = 'english-btn';
+        englishBtn.textContent = 'ENGLISH';
+        englishBtn.style.cssText = `
+          display: inline-block;
+          padding: 8px 16px;
+          background: #f8f8f8;
+          border: 1px solid #e0e0e0;
+          border-radius: 20px;
+          color: #333;
+          font-family: 'Arial', sans-serif;
+          font-size: 14px;
+          font-weight: bold;
+          margin-left: 20px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        `;
 
-          // Создаём красивую кнопку
-          const nav = document.querySelector('.main-nav');
-          if (nav) {
-            const translateWrapper = document.createElement('div');
-            translateWrapper.className = 'translate-wrapper';
-            translateWrapper.style.cssText = `
-              position: relative;
-              display: inline-block;
-              margin-left: 20px;
-              z-index: 9999;
-            `;
-
-            translateWrapper.innerHTML = `
-              <button class="translate-btn" style="
-                padding: 10px 15px;
-                background: #f8f8f8;
-                border: 1px solid #e0e0e0;
-                border-radius: 25px;
-                color: #333;
-                font-family: 'Arial', sans-serif;
-                font-size: 14px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                height: 38px;
-                min-width: 60px;
-                transition: all 0.3s ease;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-              ">
-                <span class="flag" style="font-size: 16px;">🇷🇺</span>
-                <span class="lang-text" style="font-weight: bold;">RUS</span>
-              </button>
-            `;
-
-            nav.appendChild(translateWrapper);
-
-            // Обработчик кнопки
-            translateWrapper.querySelector('.translate-btn').addEventListener('click', function() {
-              const currentLang = select.value;
-              const newLang = currentLang === 'en' ? 'ru' : 'en';
-              select.value = newLang;
-              select.dispatchEvent(new Event('change'));
-
-              // Обновляем кнопку
-              const flag = this.querySelector('.flag');
-              const text = this.querySelector('.lang-text');
-              flag.textContent = newLang === 'en' ? '🇬🇧' : '🇷🇺';
-              text.textContent = newLang === 'en' ? 'EN' : 'RUS';
-            });
+        englishBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const select = document.querySelector('.goog-te-combo');
+          if (select) {
+            select.value = 'en';
+            select.dispatchEvent(new Event('change'));
           }
-        }
-      }, 100);
+        });
+
+        nav.appendChild(englishBtn);
+      }
     }
   }, 100);
 });
@@ -508,11 +479,16 @@ document.addEventListener('DOMContentLoaded', function() {
   opacity: 0 !important;
 }
 
-/* Стили для селекта */
 .goog-te-combo {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
+}
+
+/* Стили для кнопки ENGLISH */
+.english-btn:hover {
+  background: #f0f0f0;
+  border-color: #d0d0d0;
 }
 </style>
 </body>
