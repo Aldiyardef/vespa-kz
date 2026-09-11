@@ -537,9 +537,30 @@ a {
   margin-top: 7px;
 }
 
+.header-instagram {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: 0.25s;
+}
+
+.header-instagram:hover {
+  background: white;
+  color: var(--black);
+}
 /* МОБИЛЬНАЯ ВЕРСИЯ */
 
 @media (max-width: 800px) {
+  .header-instagram {
+  margin-left: auto;
+  margin-right: 15px;
+  padding: 8px 11px;
+  font-size: 10px;
+}
   .site-header {
     padding: 15px 5%;
   }
