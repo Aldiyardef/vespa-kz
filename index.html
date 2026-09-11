@@ -602,5 +602,81 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Функция перевода текстов
+  function translatePage(lang) {
+    const translations = {
+      ru: {
+        'О КЛУБЕ': 'О КЛУБЕ',
+        'ИСТОРИЯ': 'ИСТОРИЯ',
+        'СОБЫТИЯ': 'СОБЫТИЯ',
+        'ГАЛЕРЕЯ': 'ГАЛЕРЕЯ',
+        'ДНИ РОЖДЕНИЯ': 'ДНИ РОЖДЕНИЯ',
+        'УСТАВ': 'УСТАВ',
+        'КОНТАКТЫ': 'КОНТАКТЫ',
+        'Итальянский стиль. Казахстанские дороги.': 'Italian style. Kazakhstan roads.',
+        'Vespa Kazakhstan Club — это официальное сообщество любителей скутеров Vespa в Казахстане, аккредитованное Всемирным клубом Vespa.': 'Vespa Kazakhstan Club is the official community of Vespa scooter enthusiasts in Kazakhstan, accredited by the Vespa World Club.',
+        'Клуб объединяет энтузиастов и создаёт пространство для общения, обмена опытом, покупки и продажи скутеров и запчастей.': 'The club brings together enthusiasts and creates a space for communication, experience exchange, buying and selling scooters and spare parts.',
+        'Мы поддерживаем культуру Vespa, организуем встречи, совместные поездки, фестивали и развиваем безопасное вождение.': 'We support Vespa culture, organize meetings, joint trips, festivals and develop safe driving.',
+        'Официальное сообщество любителей итальянских скутеров Vespa в Казахстане': 'Official community of Italian Vespa scooter enthusiasts in Kazakhstan'
+      },
+      en: {
+        'О КЛУБЕ': 'ABOUT',
+        'ИСТОРИЯ': 'HISTORY',
+        'СОБЫТИЯ': 'EVENTS',
+        'ГАЛЕРЕЯ': 'GALLERY',
+        'ДНИ РОЖДЕНИЯ': 'BIRTHDAYS',
+        'УСТАВ': 'CHARTER',
+        'КОНТАКТЫ': 'CONTACTS',
+        'Итальянский стиль. Казахстанские дороги.': 'Italian style. Kazakhstan roads.',
+        'Vespa Kazakhstan Club — это официальное сообщество любителей скутеров Vespa в Казахстане, аккредитованное Всемирным клубом Vespa.': 'Vespa Kazakhstan Club is the official community of Vespa scooter enthusiasts in Kazakhstan, accredited by the Vespa World Club.',
+        'Клуб объединяет энтузиастов и создаёт пространство для общения, обмена опытом, покупки и продажи скутеров и запчастей.': 'The club brings together enthusiasts and creates a space for communication, experience exchange, buying and selling scooters and spare parts.',
+        'Мы поддерживаем культуру Vespa, организуем встречи, совместные поездки, фестивали и развиваем безопасное вождение.': 'We support Vespa culture, organize meetings, joint trips, festivals and develop safe driving.',
+        'Официальное сообщество любителей итальянских скутеров Vespa в Казахстане': 'Official community of Italian Vespa scooter enthusiasts in Kazakhstan'
+      }
+    };
+
+    // Переводим навигационные ссылки
+    document.querySelectorAll('.main-nav a').forEach(link => {
+      const text = link.textContent.trim();
+      if (translations[lang][text]) {
+        link.textContent = translations[lang][text];
+      }
+    });
+
+    // Переводим основной текст
+    document.querySelectorAll('h1, h2, p, .section-title').forEach(el => {
+      const text = el.textContent.trim();
+      if (translations[lang][text]) {
+        el.textContent = translations[lang][text];
+      }
+    });
+
+    // Меняем флаг на кнопке
+    document.querySelector('.translate-btn span:first-child').textContent = lang === 'en' ? '🇬🇧' : '🇷🇺';
+    document.querySelector('.translate-btn span:nth-child(2)').textContent = lang === 'en' ? 'EN' : 'RUS';
+  }
+
+  // Обработка кликов по языковым ссылкам
+  document.querySelectorAll('.lang-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const lang = this.getAttribute('data-lang');
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', lang);
+      window.location.href = url.toString();
+    });
+  });
+
+  // Проверяем параметр lang в URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const lang = urlParams.get('lang') || 'ru';
+
+  if (lang === 'en' || lang === 'ru') {
+    translatePage(lang);
+  }
+});
+</script>
 </body>
 </html>
