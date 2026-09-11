@@ -47,8 +47,8 @@ a {
 }
 
 .logo img {
-  width: 110px;
-  max-height: 55px;
+  width: 150px;
+  max-height: 100px;
   object-fit: contain;
 }
 
@@ -87,7 +87,7 @@ a {
   align-items: center;
   padding: 140px 8%;
   color: white;
-  background: url("assets/images/main-bg.jpeg") center / cover no-repeat;
+  background: url("../images/main-bg.jpeg") center / cover no-repeat;
 }
 
 .hero-overlay {
@@ -317,31 +317,9 @@ a {
   grid-auto-flow: column;
   grid-auto-columns: minmax(260px, 28vw);
   gap: 15px;
-
-  width: 100%;
-  max-width: 100%;
   overflow-x: auto;
-  overflow-y: hidden;
-
-  padding: 10px 0 20px;
+  padding-bottom: 15px;
   scroll-behavior: smooth;
-  overscroll-behavior-x: contain;
-
-  scrollbar-width: thin;
-  scrollbar-color: #777 transparent;
-}
-
-.gallery-grid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.gallery-grid::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.gallery-grid::-webkit-scrollbar-thumb {
-  background: #777;
-  border-radius: 10px;
 }
 
 .gallery-grid img {
@@ -411,7 +389,7 @@ a {
 .report {
   background:
     linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)),
-    url("assets/images/main-bg.jpeg") center / cover no-repeat;
+    url("../images/main-bg.jpeg") center / cover no-repeat;
   color: white;
 }
 
