@@ -183,39 +183,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const events = [
     {
-      title: "Arbawine",
+      title: "Vespa Среды",
+      image: "wednesday.jpeg"
+    },
+    {
+      title: "Поездка на Arbawine",
       image: "arbawine.jpg"
     },
     {
-      title: "Club Day",
-      image: "club day.jpeg"
-    },
-    {
-      title: "Contest 2026",
+      title: "Фотоконкурс 2026",
       image: "contest2026.png"
     },
     {
-      title: "DGR",
+      title: "Distinguished Gentleman's Ride",
       image: "dgr.jpg"
     },
     {
-      title: "Issyk Kul",
-      image: "issyk-kul.jpg"
+      title: "Поездка на Иссыл-Куль",
+      image: "issykkul.jpg"
     },
     {
-      title: "Katon",
+      title: "Поездка на Катон-Карагай",
       image: "katon.jpg"
     },
     {
-      title: "Season",
+      title: "Открытие и закрытие мотосезона",
       image: "season.jpg"
     },
     {
-      title: "Sipopopendy",
-      image: "sipопопendy.jpg.avif"
+      title: "SIP Open Days",
+      image: "sipopependy.jpg"
     },
     {
-      title: "Sokol",
+      title: "Поездка на Сокол",
       image: "sokol.jpg"
     },
     {
