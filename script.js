@@ -470,7 +470,7 @@ if (friendsContainer) {
   }
 
 
-  /*
+    /*
   =====================================================
   МОБИЛЬНОЕ МЕНЮ
   =====================================================
@@ -484,7 +484,10 @@ if (friendsContainer) {
       const isOpen = navigation.classList.toggle("is-open");
       menuButton.classList.toggle("is-active", isOpen);
       menuButton.setAttribute("aria-expanded", String(isOpen));
-      menuButton.setAttribute("aria-label", isOpen ? "Закрыть меню" : "Открыть меню");
+      menuButton.setAttribute(
+        "aria-label",
+        isOpen ? "Закрыть меню" : "Открыть меню"
+      );
     });
 
     navigation.querySelectorAll("a").forEach(link => {
@@ -497,16 +500,20 @@ if (friendsContainer) {
     });
   }
 
+  /*
+  =====================================================
+  КНОПКА ENGLISH
+  =====================================================
+  */
 
-
-  document.addEventListener('DOMContentLoaded', function() {
-  const englishBtn = document.getElementById('englishBtn');
+  const englishBtn = document.getElementById("englishBtn");
 
   if (englishBtn) {
-    englishBtn.addEventListener('click', function(e) {
+    englishBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      alert('Чтобы посмотреть сайт на английском, используйте встроенный перевод страницы в браузере (например, в Chrome: ПКМ → «Перевести на английский»).');
+      alert(
+        "Чтобы посмотреть сайт на английском, используйте встроенный перевод страницы в браузере (например, в Chrome: ПКМ → «Перевести на английский»)."
+      );
     });
   }
-});
-});
+}); // ← это закрытие самого первого document.addEventListener("DOMContentLoaded", () => { ... })
