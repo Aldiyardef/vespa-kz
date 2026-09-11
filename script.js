@@ -388,14 +388,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (menuButton && navigation) {
     menuButton.addEventListener("click", () => {
-      navigation.classList.toggle("is-open");
-      menuButton.classList.toggle("is-active");
+      const isOpen = navigation.classList.toggle("is-open");
+      menuButton.classList.toggle("is-active", isOpen);
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.setAttribute("aria-label", isOpen ? "Закрыть меню" : "Открыть меню");
     });
 
     navigation.querySelectorAll("a").forEach(link => {
       link.addEventListener("click", () => {
         navigation.classList.remove("is-open");
         menuButton.classList.remove("is-active");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Открыть меню");
       });
     });
   }

@@ -17,7 +17,7 @@
   <link rel="apple-touch-icon" href="favicon_io/apple-touch-icon.png">
   <link rel="manifest" href="favicon_io/site.webmanifest">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -46,6 +46,8 @@
       <a href="#history">История</a>
       <a href="#events">События</a>
       <a href="#gallery">Галерея</a>
+      <a href="#birthdays">Дни рождения</a>
+      <a href="#charter">Устав</a>
       <a href="#contacts">Контакты</a>
     </nav>
   </header>
@@ -194,49 +196,7 @@
         </p>
       </div>
 
-      <article class="event-card">
-        <div class="event-image">
-          <img
-            src="assets/images/main-bg.jpeg"
-            alt="Клубная поездка Vespa"
-          >
-        </div>
-
-        <div class="event-content">
-          <p class="event-date">Каждую среду, 19:00</p>
-
-          <h3>
-            Vespa<br>
-            Среда
-          </h3>
-
-          <p>
-            Регулярные еженедельные встречи участников Vespa Club Kazakhstan
-            и их друзей в различных местах страны.
-          </p>
-
-          <a class="button button-dark" href="#contacts">
-            Узнать детали
-          </a>
-        </div>
-      </article>
-
-      <div class="event-list">
-        <div class="event-list-item">
-          <strong>Фотоконкурс Vespa Kazakhstan Club</strong>
-          <span>Покажите свою Vespa во всей красе.</span>
-        </div>
-
-        <div class="event-list-item">
-          <strong>Поездка на Алтай</strong>
-          <span>Усть-Каменогорск — Катон-Карагай и обратно.</span>
-        </div>
-
-        <div class="event-list-item">
-          <strong>День рождения клуба</strong>
-          <span>Ежегодное празднование Vespa Kazakhstan Club.</span>
-        </div>
-      </div>
+      <div class="events-grid" id="events-grid" aria-live="polite"></div>
     </section>
 
     <!-- ГАЛЕРЕЯ -->
@@ -274,6 +234,20 @@
         организаторами мероприятий и компаниями,
         которым близки стиль, движение и культура Vespa.
       </p>
+
+      <div class="friends-grid" id="friends-grid" aria-label="Логотипы друзей клуба"></div>
+    </section>
+
+    <!-- ДНИ РОЖДЕНИЯ -->
+    <section class="section birthdays" id="birthdays">
+      <div class="section-heading">
+        <div>
+          <p class="section-label">Календарь участников</p>
+          <h2>Дни<br>рождения</h2>
+        </div>
+        <p>Поздравляем участников клуба и сохраняем важные даты нашего сообщества.</p>
+      </div>
+      <div class="birthdays-grid" id="birthdays-grid" aria-live="polite"></div>
     </section>
 
     <!-- УСТАВ КЛУБА -->
