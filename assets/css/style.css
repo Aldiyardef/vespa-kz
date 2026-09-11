@@ -32,47 +32,28 @@ a {
   text-decoration: none;
 }
 
-/* ШАПКА */
-
 .site-header {
   position: fixed;
   z-index: 20;
   top: 0;
   left: 0;
   right: 0;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  min-height: 112px;
-  padding: 14px 5%;
-
-  background: rgba(17, 17, 17, 0.94);
+  padding: 20px 5%;
+  background: rgba(17, 17, 17, 0.9);
   color: var(--white);
 }
 
-/* ЛОГОТИП */
-
-.logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
 .logo img {
-  display: block;
-  width: 150px;
-  height: auto;
-  max-height: 82px;
+  width: 90px;
+  max-height: 55px;
   object-fit: contain;
 }
 
-/* НАВИГАЦИЯ */
-
 .main-nav {
   display: flex;
-  align-items: center;
   gap: 24px;
   font-size: 12px;
   text-transform: uppercase;
@@ -83,8 +64,6 @@ a {
 .text-link:hover {
   opacity: 0.6;
 }
-
-/* МОБИЛЬНОЕ МЕНЮ */
 
 .menu-toggle {
   display: none;
@@ -101,16 +80,16 @@ a {
   background: white;
 }
 
-/* HERO */
-
 .hero {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 150px 8% 140px;
+  padding: 140px 8%;
   color: white;
-  background: url("../images/main-bg.jpeg") center / cover no-repeat;
+  background:
+    url("../images/main-bg.jpeg")
+    center / cover no-repeat;
 }
 
 .hero-overlay {
@@ -197,8 +176,6 @@ a {
   background: white;
 }
 
-/* СЕКЦИИ */
-
 .section {
   padding: 120px 8%;
 }
@@ -252,8 +229,6 @@ a {
   margin: 60px 0 0 auto;
 }
 
-/* СОБЫТИЯ */
-
 .events-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -261,29 +236,21 @@ a {
 }
 
 .event-card {
-  overflow: hidden;
   min-height: 260px;
+  padding: 28px;
   background: white;
   border: 1px solid #ddd;
 }
 
-.event-card img {
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-}
-
-.event-info {
-  padding: 20px;
-}
-
 .event-card h3 {
-  margin: 0;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 400;
 }
 
-/* ГАЛЕРЕЯ */
+.event-card p:last-child {
+  color: var(--gray);
+  line-height: 1.5;
+}
 
 .gallery-toolbar {
   display: flex;
@@ -325,8 +292,6 @@ a {
   background: #333;
 }
 
-/* ДРУЗЬЯ */
-
 .friends-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -348,8 +313,6 @@ a {
   max-height: 90px;
   object-fit: contain;
 }
-
-/* ДНИ РОЖДЕНИЯ */
 
 .birthdays-grid {
   display: grid;
@@ -384,8 +347,6 @@ a {
   color: var(--gray);
 }
 
-/* REPORT */
-
 .report {
   background:
     linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.48)),
@@ -406,8 +367,6 @@ a {
   color: var(--black);
 }
 
-/* FOOTER */
-
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -416,8 +375,6 @@ a {
   color: white;
   font-size: 12px;
 }
-
-/* LIGHTBOX */
 
 .lightbox {
   position: fixed;
@@ -451,17 +408,102 @@ a {
   cursor: pointer;
 }
 
+/* УСТАВ КЛУБА */
+.club-charter {
+  padding-top: 0;
+  padding-bottom: 120px;
+}
+
+.charter-details {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid #ddd;
+}
+
+.charter-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 30px;
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 400;
+}
+
+.charter-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.charter-details summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--gray);
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.charter-details[open] summary {
+  border-bottom: 1px solid #ddd;
+}
+
+.charter-details[open] summary::after {
+  content: "−";
+}
+
+.charter-details summary:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: -3px;
+}
+
+.charter-content {
+  max-width: 760px;
+  padding: 28px 30px 34px;
+  color: #444;
+  line-height: 1.7;
+}
+
+.charter-content h3 {
+  margin: 0 0 30px;
+  color: var(--black);
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.charter-section + .charter-section {
+  margin-top: 30px;
+}
+
+.charter-section h4 {
+  margin: 0 0 12px;
+  color: var(--black);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.charter-content p {
+  margin: 0 0 12px;
+}
+
+.charter-content ol,
+.charter-content ul {
+  margin: 0 0 12px;
+  padding-left: 24px;
+}
+
+.charter-content li + li {
+  margin-top: 7px;
+}
+
 /* МОБИЛЬНАЯ ВЕРСИЯ */
 
 @media (max-width: 800px) {
   .site-header {
-    min-height: 88px;
-    padding: 10px 5%;
-  }
-
-  .logo img {
-    width: 125px;
-    max-height: 68px;
+    padding: 15px 5%;
   }
 
   .menu-toggle {
@@ -473,11 +515,9 @@ a {
     top: 100%;
     left: 0;
     right: 0;
-
     display: none;
     flex-direction: column;
     gap: 0;
-
     background: var(--black);
   }
 
