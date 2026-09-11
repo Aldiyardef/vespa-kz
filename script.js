@@ -1,4 +1,95 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const translations = {
+    en: {
+      "Мы в Instagram": "Follow us on Instagram",
+      "О клубе": "About the club",
+      "История": "History",
+      "События": "Events",
+      "Галерея": "Gallery",
+      "Дни рождения": "Birthdays",
+      "Устав": "Charter",
+      "Контакты": "Contacts",
+
+      "Свобода": "Freedom",
+      "в движении": "in motion",
+
+      "Официальное сообщество любителей итальянских скутеров Vespa в Казахстане.":
+        "The official community of Italian Vespa scooter enthusiasts in Kazakhstan.",
+
+      "Листайте вниз": "Scroll down",
+      "Присоединиться": "Join us",
+      "Стать частью клуба": "Become part of the club",
+
+      "Итальянский": "Italian",
+      "характер.": "character.",
+      "Казахстанские": "Kazakh",
+      "дороги.": "roads.",
+
+      "С апреля 2021 года": "Since April 2021",
+      "История клуба": "Club history",
+
+      "Календарь клуба": "Club calendar",
+      "Встречи, поездки, конкурсы и мероприятия для участников клуба и друзей Vespa.":
+        "Meetings, rides, contests and events for club members and Vespa friends.",
+
+      "Наши поездки": "Our rides",
+      "Фотографии с поездок, встреч и международных мероприятий.":
+        "Photos from rides, meetings and international events.",
+
+      "Сообщество": "Community",
+      "Наши друзья": "Our friends",
+      "Дни рождения": "Birthdays",
+      "Календарь участников": "Members' calendar",
+
+      "Устав клуба": "Club charter",
+      "Поехали вместе": "Let's ride together",
+      "Связаться с нами": "Contact us",
+      "Готовы": "Ready",
+      "к поездке?": "for a ride?",
+      "Instagram": "Instagram",
+      "Almaty, Kazakhstan": "Almaty, Kazakhstan"
+    }
+  };
+
+  const originalTexts = new Map();
+
+  function translatePage(language) {
+    document.documentElement.lang = language;
+
+    document.querySelectorAll("body *").forEach(element => {
+      if (element.children.length === 0) {
+        const original = originalTexts.get(element) || element.textContent.trim();
+
+        if (!originalTexts.has(element)) {
+          originalTexts.set(element, original);
+        }
+
+        if (language === "en" && translations.en[original]) {
+          element.textContent = translations.en[original];
+        } else if (language === "ru") {
+          element.textContent = originalTexts.get(element);
+        }
+      }
+    });
+
+    document.querySelectorAll(".lang-button").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.language === language
+      );
+    });
+
+    localStorage.setItem("vespa-language", language);
+  }
+
+  document.querySelectorAll(".lang-button").forEach(button => {
+    button.addEventListener("click", () => {
+      translatePage(button.dataset.language);
+    });
+  });
+
+  const savedLanguage = localStorage.getItem("vespa-language") || "ru";
+  translatePage(savedLanguage);
   /*
   =====================================================
   ДНИ РОЖДЕНИЯ
