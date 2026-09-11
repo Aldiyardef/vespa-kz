@@ -687,3 +687,23 @@ a {
     align-items: flex-start;
   }
 }
+<style>
+/* Стили для виджета перевода */
+#google_translate_element {
+  display: inline-block;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+}
+
+#google_translate_element select {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #f8f8f8;
+  color: #333;
+}
+
+#google_translate_element option {
+  background-color: white;
+}
+</style>
