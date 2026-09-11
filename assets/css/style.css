@@ -688,29 +688,13 @@ a {
   }
 }
 <style>
-/* Стили для меню перевода - добавьте в ваш style.css */
-.translate-menu-item {
-  position: relative;
-  display: inline-block;
-  margin-left: 20px;
+/* Добавляем в ваш style.css */
+.translate-wrapper {
   z-index: 9999 !important;
 }
 
 .translate-btn {
-  padding: 8px 12px;
-  background: #f8f8f8;
-  border: 1px solid #e0e0e0;
-  border-radius: 25px;
-  color: #333;
-  font-family: 'Arial', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
   transition: all 0.3s ease;
-  height: 36px; /* Фиксированная высота для удобного клика */
-  min-width: 60px;
 }
 
 .translate-btn:hover {
@@ -718,96 +702,57 @@ a {
   border-color: #d0d0d0;
 }
 
-.translate-dropdown {
-  display: none;
-  position: absolute;
-  right: 0;
-  background: white;
-  min-width: 120px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-radius: 8px;
-  padding: 8px 0;
-  z-index: 10000 !important; /* Очень высокий приоритет */
-  border: 1px solid #e0e0e0;
-  margin-top: 5px;
-}
-
-.translate-dropdown a {
-  display: block;
-  padding: 8px 16px;
-  color: #333;
-  text-decoration: none;
-  font-family: 'Arial', sans-serif;
-  font-size: 14px;
-  transition: background 0.2s;
-}
-
 .translate-dropdown a:hover {
   background: #f5f5f5;
   color: #4a90e2;
 }
 
-.translate-menu-item:hover .translate-dropdown {
+.translate-wrapper:hover .translate-dropdown {
   display: block;
 }
 
-/* Флаги для языков */
-.translate-btn span:first-child {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.translate-btn[data-lang="en"] span:first-child::before {
-  content: "🇬🇧";
-  font-size: 16px;
-}
-
-.translate-btn[data-lang="ru"] span:first-child::before {
-  content: "🇷🇺";
-  font-size: 16px;
+/* Убираем конфликт с вашими стилями */
+.main-nav a {
+  text-decoration: none !important;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Улучшенный обработчик для переключения языка
+  // Улучшенный обработчик переключения языка
+  const langLinks = document.querySelectorAll('.lang-link');
   const translateBtn = document.querySelector('.translate-btn');
-  const dropdownLinks = document.querySelectorAll('.translate-dropdown a');
+  const dropdown = document.querySelector('.translate-dropdown');
 
-  dropdownLinks.forEach(link => {
+  langLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
       const lang = this.getAttribute('data-lang');
 
       // Меняем отображаемый язык
-      translateBtn.setAttribute('data-lang', lang);
-      translateBtn.querySelector('span:first-child').innerHTML =
-        lang === 'en' ? '🇬🇧 EN' : '🇷🇺 RU';
+      translateBtn.querySelector('.flag').textContent = lang === 'en' ? '🇬🇧' : '🇷🇺';
+      translateBtn.querySelector('span:nth-child(2)').textContent = lang === 'en' ? 'EN' : 'RUS';
 
-      // Переключаем язык страницы (если есть поддержка)
+      // Переключаем язык страницы
       const url = new URL(window.location.href);
       url.searchParams.set('lang', lang);
       window.location.href = url.toString();
 
-      // Скрываем выпадающее меню
-      document.querySelector('.translate-dropdown').style.display = 'none';
+      dropdown.style.display = 'none';
     });
   });
 
-  // Закрытие меню при клике вне его
-  document.addEventListener('click', function(e) {
-    const menuItem = e.target.closest('.translate-menu-item');
-    if (!menuItem) {
-      document.querySelector('.translate-dropdown').style.display = 'none';
-    }
-  });
-
-  // Открытие меню при клике на кнопку
+  // Открытие/закрытие меню
   document.querySelector('.translate-btn').addEventListener('click', function(e) {
     e.stopPropagation();
-    const dropdown = document.querySelector('.translate-dropdown');
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // Закрытие при клике вне меню
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.translate-wrapper')) {
+      dropdown.style.display = 'none';
+    }
   });
 });
 </script>

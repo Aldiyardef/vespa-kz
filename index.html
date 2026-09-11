@@ -50,7 +50,8 @@
       <span></span>
     </button>
 
-<nav class="main-nav">
+<!-- Замените ВЕСЬ ваш блок <nav class="main-nav"> -->
+<nav class="main-nav" style="position: relative; z-index: 1;">
   <a href="#about">О КЛУБЕ</a>
   <a href="#history">ИСТОРИЯ</a>
   <a href="#events">СОБЫТИЯ</a>
@@ -59,15 +60,60 @@
   <a href="#charter">УСТАВ</a>
   <a href="#contacts">КОНТАКТЫ</a>
 
-  <!-- Кнопка перевода с высоким z-index -->
-  <div class="translate-menu-item" style="z-index: 9999;">
-    <button class="translate-btn">
+  <!-- Кнопка перевода с увеличенной зоной клика -->
+  <div class="translate-wrapper" style="position: relative; display: inline-block; margin-left: 20px;">
+    <button class="translate-btn" style="
+      padding: 10px 15px;
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      border-radius: 25px;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 40px;
+      min-width: 60px;
+      z-index: 9999;
+      position: relative;
+    ">
+      <span class="flag">🇷🇺</span>
       <span>RUS</span>
-      <span class="arrow">▼</span>
+      <span style="font-size: 10px;">▼</span>
     </button>
-    <div class="translate-dropdown">
-      <a href="#" data-lang="ru">Русский</a>
-      <a href="#" data-lang="en">English</a>
+    <div class="translate-dropdown" style="
+      display: none;
+      position: absolute;
+      right: 0;
+      background: white;
+      min-width: 120px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 8px;
+      padding: 8px 0;
+      z-index: 10000;
+      border: 1px solid #e0e0e0;
+      margin-top: 5px;
+    ">
+      <a href="#" class="lang-link" data-lang="ru" style="
+        display: block;
+        padding: 8px 16px;
+        color: #333;
+        text-decoration: none;
+        font-family: 'Arial', sans-serif;
+        font-size: 14px;
+        transition: background 0.2s;
+      ">Русский 🇷🇺</a>
+      <a href="#" class="lang-link" data-lang="en" style="
+        display: block;
+        padding: 8px 16px;
+        color: #333;
+        text-decoration: none;
+        font-family: 'Arial', sans-serif;
+        font-size: 14px;
+        transition: background 0.2s;
+      ">English 🇬🇧</a>
     </div>
   </div>
 </nav>
