@@ -408,5 +408,70 @@
 
   <script src="script.js"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"8607d2a720d14b038279025b2b5a82e5","spa":2}' crossorigin="anonymous"></script>
+
+<!-- Google Translate Widget -->
+<div id="google_translate_element" style="display:none;"></div>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'ru',
+    includedLanguages: 'en',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Ждём загрузки Google Translate
+  const checkGoogleTranslate = setInterval(function() {
+    if (typeof google !== 'undefined' && google.translate && google.translate.TranslateElement) {
+      clearInterval(checkGoogleTranslate);
+
+      // Инициализируем переводчик
+      googleTranslateElementInit();
+
+      // Ждём появления селекта
+      const checkSelect = setInterval(function() {
+        const select = document.querySelector('.goog-te-combo');
+        if (select) {
+          clearInterval(checkSelect);
+
+          // Создаём красивую кнопку
+          const nav = document.querySelector('.main-nav');
+          if (nav) {
+            const translateWrapper = document.createElement('div');
+            translateWrapper.className = 'translate-wrapper';
+            translateWrapper.innerHTML = `
+              <button class="translate-btn">
+                <span class="flag">🇷🇺</span>
+                <span class="lang-text">RUS</span>
+              </button>
+            `;
+            nav.appendChild(translateWrapper);
+
+            // Обработчик кнопки
+            translateWrapper.querySelector('.translate-btn').addEventListener('click', function() {
+              const currentLang = select.value;
+              const newLang = currentLang === 'en' ? 'ru' : 'en';
+              select.value = newLang;
+              select.dispatchEvent(new Event('change'));
+
+              // Обновляем кнопку
+              const flag = this.querySelector('.flag');
+              const text = this.querySelector('.lang-text');
+              flag.textContent = newLang === 'en' ? '🇬🇧' : '🇷🇺';
+              text.textContent = newLang === 'en' ? 'EN' : 'RUS';
+            });
+          }
+        }
+      }, 100);
+    }
+  }, 100);
+});
+</script>
 </body>
 </html>
