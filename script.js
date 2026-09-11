@@ -496,4 +496,17 @@ if (friendsContainer) {
       });
     });
   }
+
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+  const englishBtn = document.getElementById('englishBtn');
+
+  if (englishBtn) {
+    englishBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('Чтобы посмотреть сайт на английском, используйте встроенный перевод страницы в браузере (например, в Chrome: ПКМ → «Перевести на английский»).');
+    });
+  }
+});
 });
