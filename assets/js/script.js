@@ -290,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
       image: "dgr.jpg"
     },
     {
-      title: "Поездка на Иссыл-Куль",
+      title: "Поездка на Иссык-Куль",
       image: "issykkul.jpg"
     },
     {
