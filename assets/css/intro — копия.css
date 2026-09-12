@@ -94,6 +94,25 @@
   margin: 0 12px 3px 0;
   background: currentColor;
 }
+.intro-video__skip {
+  position: absolute;
+  z-index: 4;
+  top: clamp(5rem, 10vh, 7rem);
+  right: clamp(1.25rem, 5vw, 5rem);
+  border: 1px solid rgba(255,255,255,.45);
+  padding: 10px 14px;
+  background: rgba(0,0,0,.16);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+.intro-video__skip:hover,
+.intro-video__skip:focus-visible { background: rgba(255,255,255,.14); border-color: #fff; }
+
 .intro-video.is-complete {
   position: absolute;
   top: var(--intro-absolute-top, 0px);
@@ -111,6 +130,7 @@
 }
 @media (max-width: 600px) {
   .intro-video { height: 350vh; }
+  .intro-video__skip { top: 5rem; }
   .intro-video__scroll-hint { display: none; }
 }
 /* INTRO VIDEO STYLES END */
