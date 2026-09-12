@@ -1,70 +1,72 @@
-/* Scroll-linked intro video. Vanilla JS; independent from script.js. */
-(() => {
-  'use strict';
-
-  const intro = document.querySelector('[data-intro-video]')?.closest('.intro-video');
+(function () {
+  const section = document.getElementById('intro-video');
   const video = document.querySelector('[data-intro-video]');
-  if (!intro || !video) return;
+  if (!section || !video) return;
 
-  const placeholder = intro.querySelector('[data-intro-placeholder]');
-  const skipButton = intro.querySelector('[data-intro-skip]');
   let duration = 0;
   let targetTime = 0;
-  let rafId = 0;
-  let completed = false;
+  let seeking = false;
+  let ready = false;
 
-  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  // Принудительно инициируем загрузку и «разблокируем» декодер
+  video.load();
 
-  function updateProgress() {
-    const rect = intro.getBoundingClientRect();
-    const scrollable = Math.max(1, intro.offsetHeight - window.innerHeight);
-    const progress = clamp(-rect.top / scrollable);
-    intro.style.setProperty('--intro-progress', progress.toFixed(4));
-    targetTime = duration ? duration * progress : 0;
-    if (progress >= 0.999 && !completed) completeIntro();
+  function onReady() {
+    if (ready) return;
+    duration = video.duration;
+    if (!isFinite(duration) || duration <= 0) return;
+    ready = true;
+    section.classList.add('is-ready');
+    update();
   }
 
-  function renderVideo() {
-    rafId = 0;
-    if (duration && Number.isFinite(targetTime) && Math.abs(video.currentTime - targetTime) > 0.01) {
-      try { video.currentTime = targetTime; } catch (_) { /* metadata may still be settling */ }
+  video.addEventListener('loadedmetadata', onReady);
+  video.addEventListener('loadeddata', onReady);
+  video.addEventListener('canplay', onReady);
+
+  // Трюк: короткий play/pause «прогревает» декодер в Safari/iOS
+  video.play().then(() => video.pause()).catch(() => {});
+
+  // Очередь перемотки: ждём seeked перед следующим запросом
+  function seekLoop() {
+    if (!ready || seeking) return;
+    const diff = Math.abs(video.currentTime - targetTime);
+    if (diff < 0.01) return;
+    seeking = true;
+    video.currentTime = targetTime;
+  }
+
+  video.addEventListener('seeked', () => {
+    seeking = false;
+    seekLoop();
+  });
+
+  function update() {
+    if (!ready) return;
+    const rect = section.getBoundingClientRect();
+    const scrollable = section.offsetHeight - window.innerHeight;
+    const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+
+    targetTime = progress * duration;
+    seekLoop();
+
+    section.style.opacity = progress > 0.92
+      ? String(1 - (progress - 0.92) / 0.08)
+      : '1';
+
+    if (progress >= 1) {
+      section.classList.add('is-done');
+    } else {
+      section.classList.remove('is-done');
     }
   }
 
-  function requestRender() {
-    if (!rafId) rafId = requestAnimationFrame(renderVideo);
-  }
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { update(); ticking = false; });
+  }, { passive: true });
 
-  function completeIntro() {
-    completed = true;
-    // Keep the section at its document coordinate while the fade runs.
-    intro.style.setProperty('--intro-absolute-top', `${window.scrollY + intro.getBoundingClientRect().top}px`);
-    intro.classList.add('is-complete');
-    window.setTimeout(() => { video.pause(); }, 950);
-  }
-
-  function skipIntro() {
-    const rect = intro.getBoundingClientRect();
-    const scrollable = Math.max(1, intro.offsetHeight - window.innerHeight);
-    window.scrollTo({ top: window.scrollY + rect.top + scrollable, behavior: 'smooth' });
-  }
-
-  video.addEventListener('loadedmetadata', () => {
-    duration = Number.isFinite(video.duration) ? video.duration : 0;
-    if (duration) intro.classList.add('is-ready');
-    updateProgress();
-    requestRender();
-  });
-  video.addEventListener('canplay', () => intro.classList.add('is-ready'), { once: true });
-  video.addEventListener('error', () => { placeholder?.classList.add('is-fallback'); });
-  skipButton?.addEventListener('click', skipIntro);
-
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && !completed) { updateProgress(); requestRender(); }
-  }, { threshold: [0, 0.01, 1] });
-  observer.observe(intro);
-
-  window.addEventListener('scroll', () => { updateProgress(); requestRender(); }, { passive: true });
-  window.addEventListener('resize', () => { if (!completed) { updateProgress(); requestRender(); } }, { passive: true });
-  updateProgress();
+  window.addEventListener('resize', update);
 })();
