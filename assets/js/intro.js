@@ -140,18 +140,19 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
 
-  // подгружаем видео заранее, когда секция приближается
-  if ('IntersectionObserver' in window) {
-    const preload = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          video.preload = 'auto';
-          video.load();
-          preload.disconnect();
-        }
-      });
-    }, { rootMargin: '200% 0px' });
-    preload.observe(section);
+  // подгружаем видео заранее, не дожидаясь подхода к секции
+  if (window.requestIdleCallback) {
+    requestIdleCallback(function () {
+      video.preload = 'auto';
+      video.load();
+    }, { timeout: 3000 });
+  } else {
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        video.preload = 'auto';
+        video.load();
+      }, 1200);
+    });
   }
 
   onScroll();
