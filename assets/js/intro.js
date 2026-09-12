@@ -28,12 +28,13 @@
   video.play().then(() => video.pause()).catch(() => {});
 
   // Очередь перемотки: ждём seeked перед следующим запросом
-  function seekLoop() {
+ function seekLoop() {
     if (!ready || seeking) return;
-    const diff = Math.abs(video.currentTime - targetTime);
+    const t = Math.min(Math.max(targetTime, 0), duration - 0.05);
+    const diff = Math.abs(video.currentTime - t);
     if (diff < 0.01) return;
     seeking = true;
-    video.currentTime = targetTime;
+    video.currentTime = t;
   }
 
   video.addEventListener('seeked', () => {
@@ -49,16 +50,6 @@
 
     targetTime = progress * duration;
     seekLoop();
-
-    section.style.opacity = progress > 0.92
-      ? String(1 - (progress - 0.92) / 0.08)
-      : '1';
-
-    if (progress >= 1) {
-      section.classList.add('is-done');
-    } else {
-      section.classList.remove('is-done');
-    }
   }
 
   let ticking = false;
