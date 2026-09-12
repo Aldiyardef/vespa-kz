@@ -1,4 +1,3 @@
-/* ===== Скраб первого видео (intro) ===== */
 (function () {
   const section = document.getElementById('intro-video');
   const video = document.querySelector('[data-intro-video]');
@@ -6,12 +5,8 @@
 
   let duration = 0;
   let targetTime = 0;
-  let currentLerpedTime = 0; // Текущее плавное время
+  let seeking = false;
   let ready = false;
-  
-  // === ПАРАМЕТР ИНЕРЦИИ (от 0.01 до 0.2) ===
-  // Чем меньше значение, тем больше инерция (дольше скользит)
-  const ease = 0.08; 
 
   // Принудительно инициируем загрузку и «разблокируем» декодер
   video.load();
@@ -22,10 +17,7 @@
     if (!isFinite(duration) || duration <= 0) return;
     ready = true;
     section.classList.add('is-ready');
-    updateScroll();
-    
-    // Запускаем бесконечный цикл рендера для плавности
-    requestAnimationFrame(renderLoop);
+    update();
   }
 
   video.addEventListener('loadedmetadata', onReady);
@@ -35,37 +27,40 @@
   // Трюк: короткий play/pause «прогревает» декодер в Safari/iOS
   video.play().then(() => video.pause()).catch(() => {});
 
-  // Высчитываем только целевое время при скролле
-  function updateScroll() {
+  // Очередь перемотки: ждём seeked перед следующим запросом
+ function seekLoop() {
+    if (!ready || seeking) return;
+    const t = Math.min(Math.max(targetTime, 0), duration - 0.05);
+    const diff = Math.abs(video.currentTime - t);
+    if (diff < 0.01) return;
+    seeking = true;
+    video.currentTime = t;
+  }
+
+  video.addEventListener('seeked', () => {
+    seeking = false;
+    seekLoop();
+  });
+
+  function update() {
     if (!ready) return;
     const rect = section.getBoundingClientRect();
     const scrollable = section.offsetHeight - window.innerHeight;
-    if (scrollable <= 0) return;
-
     const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+
     targetTime = progress * duration;
+    seekLoop();
   }
 
-  // Постоянный цикл, который плавно дотягивает видео до targetTime
-  function renderLoop() {
-    if (ready && duration) {
-      // Формула инерции
-      currentLerpedTime += (targetTime - currentLerpedTime) * ease;
-      
-      // Обновляем кадр, только если накопилась достаточная разница
-      if (Math.abs(currentLerpedTime - video.currentTime) > 0.03) {
-        try {
-          video.currentTime = currentLerpedTime;
-        } catch (e) {}
-      }
-    }
-    requestAnimationFrame(renderLoop);
-  }
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { update(); ticking = false; });
+  }, { passive: true });
 
-  window.addEventListener('scroll', updateScroll, { passive: true });
-  window.addEventListener('resize', updateScroll, { passive: true });
+  window.addEventListener('resize', update);
 })();
-
 /* ===== Скраб второго видео по скроллу секции ===== */
 (function () {
   const section = document.querySelector('[data-scroll-video]');
@@ -83,18 +78,13 @@
 
   let duration = 0;
   let targetTime = 0;
-  let currentLerpedTime = 0; // Текущее плавное время
-  
-  // === ПАРАМЕТР ИНЕРЦИИ (от 0.01 до 0.2) ===
-  const ease = 0.08;
+  let seeking = false;
+  let ticking = false;
 
   function onMeta() {
     duration = video.duration || 0;
     // прогрев декодера: показать первый кадр
     try { video.currentTime = 0.001; } catch (e) {}
-    
-    // Запускаем цикл рендера после загрузки меты
-    requestAnimationFrame(renderLoop);
   }
 
   if (video.readyState >= 1) {
@@ -103,42 +93,54 @@
     video.addEventListener('loadedmetadata', onMeta, { once: true });
   }
 
-  // Высчитываем целевое время и управляем текстом при скролле
-  function updateScroll() {
+  video.addEventListener('seeked', function () {
+    seeking = false;
+    flush();
+  });
+
+  function flush() {
+    if (seeking || !duration) return;
+    const t = Math.min(Math.max(targetTime, 0), duration - 0.05);
+    if (Math.abs(video.currentTime - t) < 0.02) return;
+    seeking = true;
+    try {
+      video.currentTime = t;
+    } catch (e) {
+      seeking = false;
+    }
+  }
+
+  function update() {
+    ticking = false;
     if (!duration) return;
 
     const rect = section.getBoundingClientRect();
     const scrollable = section.offsetHeight - window.innerHeight;
     if (scrollable <= 0) return;
 
+    // progress: 0 когда верх секции коснулся верха окна, 1 — когда низ дошёл
     let progress = -rect.top / scrollable;
     progress = Math.min(Math.max(progress, 0), 1);
 
     targetTime = progress * duration;
+    flush();
 
     if (caption) {
       caption.classList.toggle('is-visible', progress > 0.15 && progress < 0.85);
     }
   }
 
-  // Постоянный цикл, который плавно дотягивает видео
-  function renderLoop() {
-    if (duration) {
-      currentLerpedTime += (targetTime - currentLerpedTime) * ease;
-      
-      if (Math.abs(currentLerpedTime - video.currentTime) > 0.03) {
-        try {
-          video.currentTime = currentLerpedTime;
-        } catch (e) {}
-      }
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(update);
     }
-    requestAnimationFrame(renderLoop);
   }
 
-  window.addEventListener('scroll', updateScroll, { passive: true });
-  window.addEventListener('resize', updateScroll, { passive: true });
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
 
-  // подгружаем видео заранее
+  // подгружаем видео заранее, не дожидаясь подхода к секции
   if (window.requestIdleCallback) {
     requestIdleCallback(function () {
       video.preload = 'auto';
@@ -153,5 +155,5 @@
     });
   }
 
-  updateScroll(); // первичный вызов
+  onScroll();
 })();
