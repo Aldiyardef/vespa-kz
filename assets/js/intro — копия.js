@@ -24,13 +24,8 @@
   video.addEventListener('loadeddata', onReady);
   video.addEventListener('canplay', onReady);
 
-// Трюк: короткий play/pause «прогревает» декодер в Safari/iOS
-video.play().then(() => {
-  video.pause();
-  video.currentTime = 0;
-}).catch(() => {
-  video.pause();
-});
+  // Трюк: короткий play/pause «прогревает» декодер в Safari/iOS
+  video.play().then(() => video.pause()).catch(() => {});
 
   // Очередь перемотки: ждём seeked перед следующим запросом
  function seekLoop() {
