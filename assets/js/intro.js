@@ -1,112 +1,159 @@
 (function () {
-  'use strict';
+  const section = document.getElementById('intro-video');
+  const video = document.querySelector('[data-intro-video]');
+  if (!section || !video) return;
 
-  // Добавляем CSS-класс блокировки скролла (инжектим один раз)
-  const style = document.createElement('style');
-  style.textContent = `
-    html.scroll-locked,
-    body.scroll-locked {
-      overflow: hidden !important;
-      height: 100% !important;
-      touch-action: none;
-    }
-  `;
-  document.head.appendChild(style);
+  let duration = 0;
+  let targetTime = 0;
+  let seeking = false;
+  let ready = false;
 
-  /**
-   * Универсальный обработчик: видео стартует само, когда секция появляется
-   * во вьюпорте, и блокирует скролл страницы до окончания видео.
-   *
-   * section  — контейнер, за появлением которого следим
-   * video    — сам <video>
-   * caption  — (опционально) подпись, которую нужно показать/скрыть
-   */
-  function initScrollLockedVideo(section, video, caption) {
-    if (!section || !video) return;
+  // Принудительно инициируем загрузку и «разблокируем» декодер
+  video.load();
 
-    let hasPlayed = false; // видео уже было запущено (срабатывает один раз)
-    let locked = false;
-
-    function lockScroll() {
-      if (locked) return;
-      locked = true;
-      document.documentElement.classList.add('scroll-locked');
-      document.body.classList.add('scroll-locked');
-    }
-
-    function unlockScroll() {
-      if (!locked) return;
-      locked = false;
-      document.documentElement.classList.remove('scroll-locked');
-      document.body.classList.remove('scroll-locked');
-    }
-
-    function playVideo() {
-      if (hasPlayed) return;
-      hasPlayed = true;
-
-      lockScroll();
-      if (caption) caption.classList.add('is-visible');
-
-      try {
-        video.currentTime = 0;
-      } catch (e) {}
-
-      const playPromise = video.play();
-      if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(() => {
-          // Если браузер заблокировал автозапуск (например, видео не muted),
-          // не держим страницу заблокированной навсегда.
-          unlockScroll();
-        });
-      }
-    }
-
-    function onEnded() {
-      unlockScroll();
-      if (caption) caption.classList.remove('is-visible');
-    }
-
-    video.addEventListener('ended', onEnded);
-
-    // Уважаем настройку "уменьшить анимацию": не блокируем скролл и не автозапускаем
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) {
-      hasPlayed = true;
-      if (caption) caption.classList.add('is-visible');
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!hasPlayed && entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-            playVideo();
-          }
-        });
-      },
-      { threshold: [0, 0.25, 0.5, 0.6, 0.75, 1] }
-    );
-
-    observer.observe(section);
+  function onReady() {
+    if (ready) return;
+    duration = video.duration;
+    if (!isFinite(duration) || duration <= 0) return;
+    ready = true;
+    section.classList.add('is-ready');
+    update();
   }
 
-  // ===== Первое видео (intro) =====
-  const introSection = document.getElementById('intro-video');
-  const introVideo = document.querySelector('[data-intro-video]');
-  if (introSection && introVideo) {
-    introVideo.load();
-    initScrollLockedVideo(introSection, introVideo);
+  video.addEventListener('loadedmetadata', onReady);
+  video.addEventListener('loadeddata', onReady);
+  video.addEventListener('canplay', onReady);
+
+  // Трюк: короткий play/pause «прогревает» декодер в Safari/iOS
+  video.play().then(() => video.pause()).catch(() => {});
+
+  // Очередь перемотки: ждём seeked перед следующим запросом
+ function seekLoop() {
+    if (!ready || seeking) return;
+    const t = Math.min(Math.max(targetTime, 0), duration - 0.05);
+    const diff = Math.abs(video.currentTime - t);
+    if (diff < 0.01) return;
+    seeking = true;
+    video.currentTime = t;
   }
 
-  // ===== Второе видео (scroll-video) =====
-  const scrollSection = document.querySelector('[data-scroll-video]');
-  if (scrollSection) {
-    const scrollVideo = scrollSection.querySelector('.scroll-video__media');
-    const caption = scrollSection.querySelector('.scroll-video__caption');
-    if (scrollVideo) {
-      scrollVideo.load();
-      initScrollLockedVideo(scrollSection, scrollVideo, caption);
+  video.addEventListener('seeked', () => {
+    seeking = false;
+    seekLoop();
+  });
+
+  function update() {
+    if (!ready) return;
+    const rect = section.getBoundingClientRect();
+    const scrollable = section.offsetHeight - window.innerHeight;
+    const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+
+    targetTime = progress * duration;
+    seekLoop();
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { update(); ticking = false; });
+  }, { passive: true });
+
+  window.addEventListener('resize', update);
+})();
+/* ===== Скраб второго видео по скроллу секции ===== */
+(function () {
+  const section = document.querySelector('[data-scroll-video]');
+  if (!section) return;
+
+  const video = section.querySelector('.scroll-video__media');
+  const caption = section.querySelector('.scroll-video__caption');
+  if (!video) return;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    if (caption) caption.classList.add('is-visible');
+    return;
+  }
+
+  let duration = 0;
+  let targetTime = 0;
+  let seeking = false;
+  let ticking = false;
+
+  function onMeta() {
+    duration = video.duration || 0;
+    // прогрев декодера: показать первый кадр
+    try { video.currentTime = 0.001; } catch (e) {}
+  }
+
+  if (video.readyState >= 1) {
+    onMeta();
+  } else {
+    video.addEventListener('loadedmetadata', onMeta, { once: true });
+  }
+
+  video.addEventListener('seeked', function () {
+    seeking = false;
+    flush();
+  });
+
+  function flush() {
+    if (seeking || !duration) return;
+    const t = Math.min(Math.max(targetTime, 0), duration - 0.05);
+    if (Math.abs(video.currentTime - t) < 0.02) return;
+    seeking = true;
+    try {
+      video.currentTime = t;
+    } catch (e) {
+      seeking = false;
     }
   }
+
+  function update() {
+    ticking = false;
+    if (!duration) return;
+
+    const rect = section.getBoundingClientRect();
+    const scrollable = section.offsetHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+
+    // progress: 0 когда верх секции коснулся верха окна, 1 — когда низ дошёл
+    let progress = -rect.top / scrollable;
+    progress = Math.min(Math.max(progress, 0), 1);
+
+    targetTime = progress * duration;
+    flush();
+
+    if (caption) {
+      caption.classList.toggle('is-visible', progress > 0.15 && progress < 0.85);
+    }
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+
+  // подгружаем видео заранее, не дожидаясь подхода к секции
+  if (window.requestIdleCallback) {
+    requestIdleCallback(function () {
+      video.preload = 'auto';
+      video.load();
+    }, { timeout: 3000 });
+  } else {
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        video.preload = 'auto';
+        video.load();
+      }, 1200);
+    });
+  }
+
+  onScroll();
 })();
