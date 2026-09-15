@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.lang = language;
 
     document.querySelectorAll("body *").forEach(element => {
+      if (element.closest("#intro-loader")) return;
       if (element.children.length === 0) {
         const original = originalTexts.get(element) || element.textContent.trim();
 
@@ -360,7 +361,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const galleryContainer =
     document.querySelector("#gallery-grid") ||
     document.querySelector(".gallery-grid");
-  const galleryImages = [];
 
   if (galleryContainer) {
     galleryContainer.innerHTML = "";
@@ -372,48 +372,17 @@ document.addEventListener("DOMContentLoaded", () => {
       image.src = `assets/gallery/photo-${fileNumber}.jpg`;
       image.alt = `Фото из галереи ${number}`;
       image.loading = "lazy";
-      galleryImages.push(image);
 
       image.onerror = () => {
         image.remove();
       };
 
       image.addEventListener("click", () => {
-        openLightbox(image.src, image.alt, galleryImages.indexOf(image));
+        openLightbox(image.src, image.alt);
       });
 
       galleryContainer.appendChild(image);
     }
-
-    const scrollStep = () => {
-      const firstImage = galleryContainer.querySelector("img");
-      if (!firstImage) return galleryContainer.clientWidth;
-      const gap = parseFloat(getComputedStyle(galleryContainer).columnGap) || 0;
-      return (firstImage.getBoundingClientRect().width + gap) *
-        Math.max(1, Math.floor(galleryContainer.clientWidth /
-          (firstImage.getBoundingClientRect().width + gap)));
-    };
-    const updateGalleryArrows = () => {
-      const wrapper = galleryContainer.closest(".gallery-scroller");
-      if (!wrapper) return;
-      wrapper.classList.toggle("is-at-start", galleryContainer.scrollLeft <= 1);
-      wrapper.classList.toggle(
-        "is-at-end",
-        galleryContainer.scrollLeft + galleryContainer.clientWidth >=
-          galleryContainer.scrollWidth - 1
-      );
-    };
-    const prevArrow = document.querySelector(".gallery-arrow--prev");
-    const nextArrow = document.querySelector(".gallery-arrow--next");
-    prevArrow?.addEventListener("click", () => {
-      galleryContainer.scrollBy({ left: -scrollStep(), behavior: "smooth" });
-    });
-    nextArrow?.addEventListener("click", () => {
-      galleryContainer.scrollBy({ left: scrollStep(), behavior: "smooth" });
-    });
-    galleryContainer.addEventListener("scroll", updateGalleryArrows, { passive: true });
-    window.addEventListener("resize", updateGalleryArrows);
-    updateGalleryArrows();
   }
 
 
@@ -469,59 +438,36 @@ if (friendsContainer) {
   =====================================================
   */
 
-  let lightboxIndex = 0;
-
-  function openLightbox(src, alt, index = 0) {
+  function openLightbox(src, alt) {
     let lightbox = document.querySelector(".lightbox");
 
     if (!lightbox) {
       lightbox = document.createElement("div");
       lightbox.className = "lightbox";
-      lightbox.setAttribute("role", "dialog");
-      lightbox.setAttribute("aria-modal", "true");
+
       lightbox.innerHTML = `
-        <button class="lightbox-close" type="button" aria-label="Закрыть">×</button>
-        <button class="lightbox-arrow lightbox-arrow--prev" type="button" aria-label="Предыдущее фото">‹</button>
+        <button class="lightbox-close" aria-label="Закрыть">×</button>
         <img src="" alt="">
-        <button class="lightbox-arrow lightbox-arrow--next" type="button" aria-label="Следующее фото">›</button>
       `;
+
       document.body.appendChild(lightbox);
 
-      const closeLightbox = () => lightbox.classList.remove("is-visible");
-      const showLightboxImage = (nextIndex) => {
-        const images = galleryImages.filter(image => image.isConnected);
-        if (!images.length) return;
-        lightboxIndex = (nextIndex + images.length) % images.length;
-        const image = images[lightboxIndex];
-        lightbox.querySelector("img").src = image.src;
-        lightbox.querySelector("img").alt = image.alt;
-      };
-      lightbox.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
-      lightbox.querySelector(".lightbox-arrow--prev").addEventListener("click", () => showLightboxImage(lightboxIndex - 1));
-      lightbox.querySelector(".lightbox-arrow--next").addEventListener("click", () => showLightboxImage(lightboxIndex + 1));
+      lightbox
+        .querySelector(".lightbox-close")
+        .addEventListener("click", () => {
+          lightbox.classList.remove("is-visible");
+        });
+
       lightbox.addEventListener("click", event => {
-        if (event.target === lightbox) closeLightbox();
+        if (event.target === lightbox) {
+          lightbox.classList.remove("is-visible");
+        }
       });
-      lightbox.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeLightbox();
-        if (event.key === "ArrowLeft") showLightboxImage(lightboxIndex - 1);
-        if (event.key === "ArrowRight") showLightboxImage(lightboxIndex + 1);
-      });
-      let touchStartX = 0;
-      lightbox.addEventListener("touchstart", event => { touchStartX = event.changedTouches[0].clientX; }, { passive: true });
-      lightbox.addEventListener("touchend", event => {
-        const deltaX = event.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(deltaX) > 50) showLightboxImage(lightboxIndex + (deltaX < 0 ? 1 : -1));
-      }, { passive: true });
-      lightbox._showImage = showLightboxImage;
     }
 
-    lightboxIndex = index;
     lightbox.querySelector("img").src = src;
     lightbox.querySelector("img").alt = alt;
     lightbox.classList.add("is-visible");
-    lightbox.tabIndex = -1;
-    lightbox.focus();
   }
 
 

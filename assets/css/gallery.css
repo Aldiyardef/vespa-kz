@@ -1,0 +1,131 @@
+/* Галерея: прокрутка лентой с двумя круглыми стрелками поверх ленты. */
+
+.gallery-scroller {
+  position: relative;
+  --gallery-arrow-size: 44px;
+  --gallery-arrow-offset: 12px;
+}
+
+.gallery-grid {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+}
+
+.gallery-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.gallery-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+}
+
+.gallery-grid img {
+  scroll-snap-align: start;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  width: var(--gallery-arrow-size);
+  height: var(--gallery-arrow-size);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gallery-arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.gallery-arrow:hover {
+  background: #fff;
+  color: #111;
+}
+
+.gallery-arrow--prev {
+  left: var(--gallery-arrow-offset);
+}
+
+.gallery-arrow--next {
+  right: var(--gallery-arrow-offset);
+}
+
+.gallery-scroller.is-at-start .gallery-arrow--prev,
+.gallery-scroller.is-at-end .gallery-arrow--next {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .gallery-arrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-grid,
+  .gallery-arrow {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}
+
+/* Лайтбокс: стрелки навигации по краям. */
+
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.lightbox-arrow:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.lightbox-arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.lightbox-arrow--prev {
+  left: 30px;
+}
+
+.lightbox-arrow--next {
+  right: 30px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox-arrow {
+    transition: none;
+  }
+}
