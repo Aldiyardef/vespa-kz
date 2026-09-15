@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const events = [
     {
-      title: "Vespa Среды",
+      title: "Vespa Среда",
       image: "wednesday.jpeg"
     },
     {
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
       image: "issykkul.jpg"
     },
     {
-      title: "Поездка на Катон-Карагай",
+      title: "Поездка в Катон-Карагай",
       image: "katon.jpg"
     },
     {
