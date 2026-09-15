@@ -19,6 +19,7 @@
 
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/intro.css">
+  <link rel="stylesheet" href="assets/css/gallery.css">
   <!-- Google Translate Customization -->
 <meta name="google-translate-customization" content="f5e3c8a1f0e8f8e8-0000000000000000-0000000000000000"></meta>
 </head>
@@ -259,7 +260,19 @@
         </p>
       </div>
 
-      <div class="gallery-grid" id="gallery-grid"></div>
+      <div class="gallery-scroller">
+        <button
+          class="gallery-arrow gallery-arrow--prev"
+          type="button"
+          aria-label="Прокрутить галерею назад"
+        >‹</button>
+        <div class="gallery-grid" id="gallery-grid"></div>
+        <button
+          class="gallery-arrow gallery-arrow--next"
+          type="button"
+          aria-label="Прокрутить галерею вперёд"
+        >›</button>
+      </div>
     </section>
 
     <!-- ПАРТНЁРЫ -->

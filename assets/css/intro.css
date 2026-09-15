@@ -155,7 +155,8 @@ body.intro-locked {
 .intro-loader__track { height: 2px; overflow: hidden; background: rgba(255,255,255,.22); }
 .intro-loader__bar { width: 0; height: 100%; background: #fff; transition: width 180ms ease; }
 .intro-loader__percent { margin-top: 10px; color: rgba(255,255,255,.6); font-size: 10px; letter-spacing: .12em; }
-.intro-loader.is-hidden { visibility: hidden; opacity: 0; }
+.intro-loader.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; transition: opacity 700ms ease, visibility 0s linear 700ms; }
+.intro-loader[hidden] { display: none; }
 
 /* INTRO VIDEO STYLES END */
 /* ===== Секция со вторым видео (скраб по скроллу) ===== */

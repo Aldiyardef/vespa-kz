@@ -487,7 +487,27 @@ if (friendsContainer) {
       `;
       document.body.appendChild(lightbox);
 
-      const closeLightbox = () => lightbox.classList.remove("is-visible");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const scrollBehavior = reduceMotion ? "auto" : "smooth";
+
+      const closeLightbox = () => {
+        lightbox.classList.remove("is-visible");
+        document.removeEventListener("keydown", onLightboxKey, true);
+        document.body.style.overflow = "";
+      };
+      const onLightboxKey = (event) => {
+        if (!lightbox.classList.contains("is-visible")) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeLightbox();
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          showLightboxImage(lightboxIndex - 1);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          showLightboxImage(lightboxIndex + 1);
+        }
+      };
       const showLightboxImage = (nextIndex) => {
         const images = galleryImages.filter(image => image.isConnected);
         if (!images.length) return;
@@ -496,32 +516,64 @@ if (friendsContainer) {
         lightbox.querySelector("img").src = image.src;
         lightbox.querySelector("img").alt = image.alt;
       };
+
       lightbox.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
-      lightbox.querySelector(".lightbox-arrow--prev").addEventListener("click", () => showLightboxImage(lightboxIndex - 1));
-      lightbox.querySelector(".lightbox-arrow--next").addEventListener("click", () => showLightboxImage(lightboxIndex + 1));
+      lightbox.querySelector(".lightbox-arrow--prev").addEventListener("click", (event) => {
+        event.stopPropagation();
+        showLightboxImage(lightboxIndex - 1);
+      });
+      lightbox.querySelector(".lightbox-arrow--next").addEventListener("click", (event) => {
+        event.stopPropagation();
+        showLightboxImage(lightboxIndex + 1);
+      });
       lightbox.addEventListener("click", event => {
         if (event.target === lightbox) closeLightbox();
       });
-      lightbox.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeLightbox();
-        if (event.key === "ArrowLeft") showLightboxImage(lightboxIndex - 1);
-        if (event.key === "ArrowRight") showLightboxImage(lightboxIndex + 1);
-      });
+
       let touchStartX = 0;
-      lightbox.addEventListener("touchstart", event => { touchStartX = event.changedTouches[0].clientX; }, { passive: true });
-      lightbox.addEventListener("touchend", event => {
-        const deltaX = event.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(deltaX) > 50) showLightboxImage(lightboxIndex + (deltaX < 0 ? 1 : -1));
+      let touchStartY = 0;
+      lightbox.addEventListener("touchstart", event => {
+        touchStartX = event.changedTouches[0].clientX;
+        touchStartY = event.changedTouches[0].clientY;
       }, { passive: true });
-      lightbox._showImage = showLightboxImage;
+      lightbox.addEventListener("touchend", event => {
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - touchStartX;
+        const deltaY = touch.clientY - touchStartY;
+        if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          showLightboxImage(lightboxIndex + (deltaX < 0 ? 1 : -1));
+        }
+      }, { passive: true });
+
+      lightbox._closeLightbox = closeLightbox;
+      lightbox._scrollBehavior = scrollBehavior;
     }
 
     lightboxIndex = index;
     lightbox.querySelector("img").src = src;
     lightbox.querySelector("img").alt = alt;
     lightbox.classList.add("is-visible");
-    lightbox.tabIndex = -1;
-    lightbox.focus();
+    document.body.style.overflow = "hidden";
+    // Обработчик клавиатуры ставим на документ, чтобы он работал
+    // независимо от того, где сейчас фокус (стрелки, кнопка закрытия, основной документ).
+    if (!lightbox._keyHandlerInstalled) {
+      const handler = (event) => {
+        if (!lightbox.classList.contains("is-visible")) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          lightbox._closeLightbox();
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          lightbox.querySelector(".lightbox-arrow--prev").click();
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          lightbox.querySelector(".lightbox-arrow--next").click();
+        }
+      };
+      document.addEventListener("keydown", handler);
+      lightbox._keyHandler = handler;
+      lightbox._keyHandlerInstalled = true;
+    }
   }
 
 
