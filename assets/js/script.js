@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.lang = language;
 
     document.querySelectorAll("body *").forEach(element => {
-      if (element.closest("#intro-loader")) return;
       if (element.children.length === 0) {
         const original = originalTexts.get(element) || element.textContent.trim();
 
@@ -363,11 +362,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".gallery-grid");
 
   if (galleryContainer) {
+    const galleryViewport = galleryContainer.closest(".gallery-viewport");
+    const previousButton = galleryViewport?.querySelector(".gallery-nav--prev");
+    const nextButton = galleryViewport?.querySelector(".gallery-nav--next");
+    let scrollFrame = 0;
+
     galleryContainer.innerHTML = "";
 
     for (let number = 1; number <= 144; number++) {
       const fileNumber = String(number).padStart(3, "0");
-
       const image = document.createElement("img");
       image.src = `assets/gallery/photo-${fileNumber}.jpg`;
       image.alt = `Фото из галереи ${number}`;
@@ -375,6 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       image.onerror = () => {
         image.remove();
+        updateGalleryNav();
       };
 
       image.addEventListener("click", () => {
@@ -383,6 +387,88 @@ document.addEventListener("DOMContentLoaded", () => {
 
       galleryContainer.appendChild(image);
     }
+
+    function getGalleryStep() {
+      const firstImage = galleryContainer.querySelector("img");
+      if (!firstImage) return 1;
+
+      const styles = getComputedStyle(galleryContainer);
+      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+      const itemWidth = firstImage.getBoundingClientRect().width + gap;
+      return Math.max(1, Math.floor((galleryContainer.clientWidth + gap) / itemWidth));
+    }
+
+    function updateGalleryNav() {
+      const maxScroll = galleryContainer.scrollWidth - galleryContainer.clientWidth;
+      const atStart = galleryContainer.scrollLeft <= 1;
+      const atEnd = galleryContainer.scrollLeft >= maxScroll - 1;
+      const hasOverflow = maxScroll > 1;
+
+      [[previousButton, atStart || !hasOverflow], [nextButton, atEnd || !hasOverflow]]
+        .forEach(([button, hidden]) => {
+          if (!button) return;
+          button.classList.toggle("is-hidden", hidden);
+          button.disabled = hidden;
+          button.setAttribute("aria-hidden", String(hidden));
+        });
+    }
+
+    function scrollGallery(direction) {
+      const firstImage = galleryContainer.querySelector("img");
+      if (!firstImage) return;
+
+      const styles = getComputedStyle(galleryContainer);
+      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+      const stride = firstImage.getBoundingClientRect().width + gap;
+      const maxScroll = galleryContainer.scrollWidth - galleryContainer.clientWidth;
+      const target = Math.max(0, Math.min(
+        maxScroll,
+        galleryContainer.scrollLeft + direction * getGalleryStep() * stride
+      ));
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      galleryContainer.scrollTo({ left: target, behavior: reducedMotion ? "auto" : "smooth" });
+    }
+
+    previousButton?.addEventListener("click", () => scrollGallery(-1));
+    nextButton?.addEventListener("click", () => scrollGallery(1));
+
+    galleryContainer.addEventListener("scroll", () => {
+      if (scrollFrame) return;
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = 0;
+        updateGalleryNav();
+      });
+    }, { passive: true });
+
+    galleryContainer.addEventListener("keydown", event => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      const direction = event.key === "ArrowLeft" ? -1 : 1;
+      const maxScroll = galleryContainer.scrollWidth - galleryContainer.clientWidth;
+      const canScroll = direction < 0
+        ? galleryContainer.scrollLeft > 1
+        : galleryContainer.scrollLeft < maxScroll - 1;
+      if (!canScroll) return;
+      event.preventDefault();
+      scrollGallery(direction);
+    });
+
+    galleryContainer.addEventListener("wheel", event => {
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      const direction = event.deltaY < 0 ? -1 : 1;
+      const maxScroll = galleryContainer.scrollWidth - galleryContainer.clientWidth;
+      const canScroll = direction < 0
+        ? galleryContainer.scrollLeft > 1
+        : galleryContainer.scrollLeft < maxScroll - 1;
+      if (!canScroll) return;
+      event.preventDefault();
+      galleryContainer.scrollBy({ left: event.deltaY, behavior: "auto" });
+    }, { passive: false });
+
+    const resizeObserver = new ResizeObserver(updateGalleryNav);
+    resizeObserver.observe(galleryContainer);
+    galleryContainer.addEventListener("load", updateGalleryNav, true);
+    window.addEventListener("resize", updateGalleryNav, { passive: true });
+    updateGalleryNav();
   }
 
 

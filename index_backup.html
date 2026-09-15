@@ -28,13 +28,19 @@
   <section class="intro-video" id="intro-video">
     <div class="intro-video__sticky">
       <video class="intro-video__media" data-intro-video
-             src="assets/video/1-scrub.mp4"
              poster="assets/video/1-poster.jpg"
              preload="auto" muted playsinline 
              disablepictureinpicture>
         <source media="(max-width: 768px)" src="assets/video/1-scrub-mobile.mp4" type="video/mp4">
         <source src="assets/video/1-scrub.mp4" type="video/mp4">
       </video>
+      <div class="intro-loader" id="intro-loader" aria-live="polite">
+        <div class="intro-loader__inner">
+          <div class="intro-loader__label">Загрузка</div>
+          <div class="intro-loader__track"><div class="intro-loader__bar"></div></div>
+          <div class="intro-loader__percent" id="intro-loader-percent">0%</div>
+        </div>
+      </div>
     </div>
   </section>
 

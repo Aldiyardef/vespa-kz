@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.lang = language;
 
     document.querySelectorAll("body *").forEach(element => {
+      if (element.closest("#intro-loader")) return;
       if (element.children.length === 0) {
         const original = originalTexts.get(element) || element.textContent.trim();
 

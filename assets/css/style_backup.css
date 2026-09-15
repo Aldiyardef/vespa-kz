@@ -312,36 +312,14 @@ a {
   color: var(--black);
 }
 
-.gallery-viewport {
-  position: relative;
-  min-width: 0;
-}
-
 .gallery-grid {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(260px, 28vw);
   gap: 15px;
   overflow-x: auto;
-  padding: 0 2px 15px;
+  padding-bottom: 15px;
   scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.45) transparent;
-  overscroll-behavior-x: contain;
-}
-
-.gallery-grid::-webkit-scrollbar {
-  height: 5px;
-}
-
-.gallery-grid::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.gallery-grid::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.45);
-  border-radius: 999px;
 }
 
 .gallery-grid img {
@@ -350,78 +328,6 @@ a {
   object-fit: cover;
   cursor: pointer;
   background: #333;
-  scroll-snap-align: start;
-  border-radius: 2px;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-.gallery-grid img:hover {
-  transform: translateY(-3px);
-}
-
-.gallery-nav {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  display: grid;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 50%;
-  background: rgba(17, 17, 17, 0.48);
-  color: white;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-  transform: translateY(-50%);
-  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.gallery-nav:hover:not(:disabled),
-.gallery-nav:focus-visible:not(:disabled) {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--black);
-}
-
-.gallery-nav:focus-visible {
-  outline: 2px solid white;
-  outline-offset: 3px;
-}
-
-.gallery-nav:disabled,
-.gallery-nav.is-hidden {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.gallery-nav--prev {
-  left: 12px;
-}
-
-.gallery-nav--next {
-  right: 12px;
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .gallery-nav {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gallery-grid {
-    scroll-behavior: auto;
-  }
-
-  .gallery-grid img,
-  .gallery-nav {
-    transition: none;
-  }
 }
 
 /* ДРУЗЬЯ */
