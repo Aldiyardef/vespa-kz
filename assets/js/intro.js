@@ -1,4 +1,4 @@
-/* Прелоадер первого видео и синхронизация скраб-видео с прокруткой. */
+/* Однократное автопроигрывание видео интро без привязки к прокрутке. */
 (function () {
   const section = document.getElementById('intro-video');
   const video = document.querySelector('[data-intro-video]');
@@ -9,17 +9,13 @@
   if (!section || !video) return;
 
   const LOAD_TIMEOUT = 30000;
-  let duration = 0;
-  let targetTime = 0;
-  let seeking = false;
   let ready = false;
   let loaderHidden = false;
+  let safetyTimer;
 
   video.muted = true;
   video.playsInline = true;
   video.preload = 'auto';
-  document.documentElement.classList.add('intro-locked');
-  document.body.classList.add('intro-locked');
 
   function progress(value) {
     const safe = Math.max(0, Math.min(100, Math.round(value)));
@@ -33,69 +29,37 @@
     if (hint) hint.style.display = 'none';
     if (loader) {
       loader.classList.add('is-hidden');
-      window.setTimeout(function () {
-        loader.setAttribute('hidden', '');
-        document.documentElement.classList.remove('intro-locked');
-        document.body.classList.remove('intro-locked');
-      }, 700);
-    } else {
-      document.documentElement.classList.remove('intro-locked');
-      document.body.classList.remove('intro-locked');
+      window.setTimeout(function () { loader.setAttribute('hidden', ''); }, 700);
     }
   }
 
-  function seekLoop() {
-    if (!ready || seeking || !duration) return;
-    const t = Math.min(Math.max(targetTime, 0), Math.max(duration - 0.05, 0));
-    if (Math.abs(video.currentTime - t) < 0.01) return;
-    seeking = true;
-    try { video.currentTime = t; } catch (error) { seeking = false; }
+  function freezeAtEnd() {
+    video.pause();
+    if (Number.isFinite(video.duration) && video.duration > 0) {
+      const lastFrameTime = Math.max(0, video.duration - 0.05);
+      if (video.currentTime >= video.duration || video.currentTime < lastFrameTime) {
+        try { video.currentTime = lastFrameTime; } catch (error) { /* Сохраняем доступный последний кадр. */ }
+      }
+    }
   }
+  video.addEventListener('ended', freezeAtEnd);
 
-  function update() {
-    if (!ready || !duration) return;
-    const rect = section.getBoundingClientRect();
-    const scrollable = section.offsetHeight - window.innerHeight;
-    if (scrollable <= 0) return;
-    targetTime = Math.min(Math.max(-rect.top / scrollable, 0), 1) * duration;
-    seekLoop();
-  }
-
-  video.addEventListener('seeked', function () {
-    seeking = false;
-    seekLoop();
-  });
-
-  // Показать сайт, когда у браузера уже есть первый декодированный кадр.
+  // Первый декодированный кадр снимает загрузочный экран и запускает видео.
   function onReady() {
     if (ready) return;
     ready = true;
-    duration = Number.isFinite(video.duration) ? video.duration : 0;
+    window.clearTimeout(safetyTimer);
     section.classList.add('is-ready');
     progress(100);
-
-    // Сначала пробуем стартовать уже загруженное беззвучное видео; только
-    // после resolve/reject play() скрываем экран загрузки и открываем прокрутку.
-    function finishIntro() {
-      video.pause();
-      try { video.currentTime = 0; } catch (error) { /* Источник мог завершиться. */ }
-      unlock();
-      update();
-    }
+    unlock();
     try {
-      const playResult = video.play();
-      if (playResult && typeof playResult.then === 'function') {
-        playResult.then(finishIntro).catch(finishIntro);
-      } else {
-        finishIntro();
-      }
-    } catch (error) {
-      finishIntro();
-    }
+      const result = video.play();
+      if (result && typeof result.catch === 'function') result.catch(function () { /* Автовоспроизведение может быть запрещено браузером. */ });
+    } catch (error) { /* Сайт остаётся доступен, даже если запуск запрещён. */ }
   }
 
   function onError() {
-    // Ошибка файла не должна навсегда блокировать прокрутку сайта.
+    window.clearTimeout(safetyTimer);
     unlock();
   }
 
@@ -108,7 +72,7 @@
         const buffered = video.buffered.end(video.buffered.length - 1);
         progress(100 * buffered / video.duration);
       }
-    } catch (error) { /* Не все браузеры отдают buffered во время загрузки. */ }
+    } catch (error) { /* buffered недоступен во время некоторых фаз загрузки. */ }
   });
 
   function chooseSource() {
@@ -122,8 +86,10 @@
     return window.matchMedia('(max-width: 768px)').matches && mobile ? mobile.src : (desktop && desktop.src);
   }
 
-  // Нативная загрузка позволяет браузеру декодировать видео напрямую, без
-  // полного накопления файла в памяти и повторного назначения blob-URL.
+  safetyTimer = window.setTimeout(function () {
+    unlock(); // Предохранитель: загрузка никогда не блокирует сайт бесконечно.
+  }, LOAD_TIMEOUT);
+
   const source = chooseSource();
   if (source) {
     video.src = source;
@@ -131,85 +97,67 @@
   } else {
     onError();
   }
-
-  const safetyTimer = window.setTimeout(function () {
-    // Деградация без зависшего экрана; если кадра нет, сайт всё равно доступен.
-    unlock();
-  }, LOAD_TIMEOUT);
-
-  video.addEventListener('loadeddata', function () { window.clearTimeout(safetyTimer); }, { once: true });
-  video.addEventListener('error', function () { window.clearTimeout(safetyTimer); }, { once: true });
-
-  let ticking = false;
-  window.addEventListener('scroll', function () {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(function () { update(); ticking = false; });
-  }, { passive: true });
-  window.addEventListener('resize', update);
 })();
 
-/* Скраб второго видео по прокрутке соответствующей секции. */
+/* Второй ролик начинает проигрываться один раз при появлении в области просмотра. */
 (function () {
   const section = document.querySelector('[data-scroll-video]');
-  if (!section) return;
-  const video = section.querySelector('.scroll-video__media');
-  const caption = section.querySelector('.scroll-video__caption');
+  const video = section && section.querySelector('.scroll-video__media');
+  const caption = section && section.querySelector('.scroll-video__caption');
   if (!video) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    if (caption) caption.classList.add('is-visible');
-    return;
-  }
 
-  let duration = 0;
-  let targetTime = 0;
-  let seeking = false;
-  let ticking = false;
+  let ready = video.readyState >= 2;
+  let inView = false;
+  let playAttempted = false;
+  video.muted = true;
+  video.playsInline = true;
 
-  function onMeta() {
-    duration = Number.isFinite(video.duration) ? video.duration : 0;
-    if (duration) {
-      try { video.currentTime = 0.001; } catch (error) { /* Метаданные загружены позже. */ }
+  function freezeAtEnd() {
+    video.pause();
+    if (Number.isFinite(video.duration) && video.duration > 0) {
+      const lastFrameTime = Math.max(0, video.duration - 0.05);
+      if (video.currentTime >= video.duration || video.currentTime < lastFrameTime) {
+        try { video.currentTime = lastFrameTime; } catch (error) { /* Оставляем последний отрисованный кадр. */ }
+      }
     }
   }
-  if (video.readyState >= 1) onMeta();
-  else video.addEventListener('loadedmetadata', onMeta, { once: true });
+  video.addEventListener('ended', freezeAtEnd);
 
-  function flush() {
-    if (seeking || !duration) return;
-    const t = Math.min(Math.max(targetTime, 0), Math.max(duration - 0.05, 0));
-    if (Math.abs(video.currentTime - t) < 0.02) return;
-    seeking = true;
-    try { video.currentTime = t; } catch (error) { seeking = false; }
+  function maybePlay() {
+    if (!ready || !inView || playAttempted) return;
+    playAttempted = true;
+    try {
+      const result = video.play();
+      if (result && typeof result.catch === 'function') result.catch(function () { /* Не ломаем прокрутку при запрете autoplay. */ });
+    } catch (error) { /* Видео остаётся доступным как постер. */ }
   }
-  video.addEventListener('seeked', function () { seeking = false; flush(); });
 
-  function update() {
-    ticking = false;
-    const rect = section.getBoundingClientRect();
-    const scrollable = section.offsetHeight - window.innerHeight;
-    if (scrollable <= 0) return;
-    const amount = Math.min(Math.max(-rect.top / scrollable, 0), 1);
-    if (duration) {
-      targetTime = amount * duration;
-      flush();
-    }
-    if (caption) caption.classList.toggle('is-visible', amount > 0.15 && amount < 0.85);
+  function onReady() {
+    ready = true;
+    maybePlay();
   }
-  function onScroll() {
-    if (!ticking) {
-      ticking = true;
-      window.requestAnimationFrame(update);
-    }
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll, { passive: true });
-  if (window.requestIdleCallback) {
-    window.requestIdleCallback(function () { video.preload = 'auto'; video.load(); }, { timeout: 3000 });
+  video.addEventListener('loadeddata', onReady);
+  video.addEventListener('canplay', onReady);
+  if (ready) onReady();
+
+  if (window.IntersectionObserver) {
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          inView = true;
+          if (caption) caption.classList.add('is-visible');
+          if (!ready) {
+            video.preload = 'auto';
+            video.load();
+          }
+          maybePlay();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.15 });
+    observer.observe(section);
   } else {
-    window.addEventListener('load', function () {
-      window.setTimeout(function () { video.preload = 'auto'; video.load(); }, 1200);
-    });
+    inView = true;
+    maybePlay();
   }
-  onScroll();
 })();

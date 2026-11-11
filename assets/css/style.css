@@ -688,11 +688,12 @@ a {
   }
 }
 
-/* Видео интро и скролл-секция фиксированы в своих контейнерах и не меняют поток страницы. */
+/* Видео занимают обычный экранный блок и не управляют прокруткой страницы. */
 .intro-video,
 .scroll-video {
   position: relative;
-  height: 200vh;
+  height: 100vh;
+  min-height: 480px;
   background: #111;
 }
 
@@ -700,10 +701,9 @@ a {
 
 .intro-video__sticky,
 .scroll-video__sticky {
-  position: sticky;
-  top: 0;
+  position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
   background: #111;
 }
@@ -760,7 +760,6 @@ a {
 .intro-loader__percent { min-width: 3em; font-size: 12px; text-align: right; }
 .intro-loader__hint { margin-top: 14px; color: rgba(255, 255, 255, 0.7); font-size: 12px; }
 
-.intro-locked { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   .intro-loader, .intro-loader__bar { transition: none; }

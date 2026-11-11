@@ -493,18 +493,14 @@ if (friendsContainer) {
       const closeLightbox = () => {
         lightbox.classList.remove("is-visible");
         document.removeEventListener("keydown", onLightboxKey, true);
-        document.body.style.overflow = "";
       };
       const onLightboxKey = (event) => {
         if (!lightbox.classList.contains("is-visible")) return;
         if (event.key === "Escape") {
-          event.preventDefault();
           closeLightbox();
         } else if (event.key === "ArrowLeft") {
-          event.preventDefault();
           showLightboxImage(lightboxIndex - 1);
         } else if (event.key === "ArrowRight") {
-          event.preventDefault();
           showLightboxImage(lightboxIndex + 1);
         }
       };
@@ -553,20 +549,16 @@ if (friendsContainer) {
     lightbox.querySelector("img").src = src;
     lightbox.querySelector("img").alt = alt;
     lightbox.classList.add("is-visible");
-    document.body.style.overflow = "hidden";
     // Обработчик клавиатуры ставим на документ, чтобы он работал
     // независимо от того, где сейчас фокус (стрелки, кнопка закрытия, основной документ).
     if (!lightbox._keyHandlerInstalled) {
       const handler = (event) => {
         if (!lightbox.classList.contains("is-visible")) return;
         if (event.key === "Escape") {
-          event.preventDefault();
           lightbox._closeLightbox();
         } else if (event.key === "ArrowLeft") {
-          event.preventDefault();
           lightbox.querySelector(".lightbox-arrow--prev").click();
         } else if (event.key === "ArrowRight") {
-          event.preventDefault();
           lightbox.querySelector(".lightbox-arrow--next").click();
         }
       };
@@ -617,7 +609,6 @@ if (friendsContainer) {
 
   if (englishBtn) {
     englishBtn.addEventListener("click", (e) => {
-      e.preventDefault();
       alert(
         "If you want to view the website in English, use your browser’s built‑in page translation feature (for example, in Chrome: right‑click → “Translate to English”)."
       );
